@@ -1,0 +1,14 @@
+node_modules/
+dist/
+out/
+coverage/
+*.tsbuildinfo
+.DS_Store
+.env
+.env.*
+.claude/
+
+# Local generated project memories should be reviewed before committing.
+.ai-memory/
+.ai-memory/audit/
+.ai-memory/snapshots/

@@ -1,0 +1,127 @@
+{
+  "name": "devmemory-ai-vscode",
+  "displayName": "DevMemory AI",
+  "description": "Local-first persistent memory for AI coding sessions.",
+  "version": "0.1.0",
+  "private": true,
+  "publisher": "devmemory-ai",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": [
+    "onCommand:devmemory.initializeProject",
+    "onCommand:devmemory.generateResumePrompt",
+    "onCommand:devmemory.addSessionSummary",
+    "onCommand:devmemory.openMemoryFolder",
+    "onCommand:devmemory.openScanReport",
+    "onCommand:devmemory.generateBootstrapPrompt",
+    "onCommand:devmemory.applyBootstrapMemory",
+    "onCommand:devmemory.generateSessionEndPrompt",
+    "onCommand:devmemory.applySessionUpdate",
+    "onCommand:devmemory.refreshView",
+    "onCommand:devmemory.runHealthCheck",
+    "onCommand:devmemory.quarantineFlaggedSessions",
+    "onView:devmemory.memoryView"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "devmemory.initializeProject",
+        "title": "DevMemory AI: Set Up Memory"
+      },
+      {
+        "command": "devmemory.generateResumePrompt",
+        "title": "DevMemory AI: Start AI Session"
+      },
+      {
+        "command": "devmemory.addSessionSummary",
+        "title": "DevMemory AI: Add Session Summary"
+      },
+      {
+        "command": "devmemory.openMemoryFolder",
+        "title": "DevMemory AI: Open Memory Files"
+      },
+      {
+        "command": "devmemory.openScanReport",
+        "title": "DevMemory AI: View Scan Report"
+      },
+      {
+        "command": "devmemory.generateBootstrapPrompt",
+        "title": "DevMemory AI: Teach DevMemory About This Project"
+      },
+      {
+        "command": "devmemory.applyBootstrapMemory",
+        "title": "DevMemory AI: Save Project Understanding"
+      },
+      {
+        "command": "devmemory.generateSessionEndPrompt",
+        "title": "DevMemory AI: End AI Session"
+      },
+      {
+        "command": "devmemory.applySessionUpdate",
+        "title": "DevMemory AI: Save Session Summary"
+      },
+      {
+        "command": "devmemory.refreshView",
+        "title": "DevMemory AI: Refresh View",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "devmemory.runHealthCheck",
+        "title": "DevMemory AI: Check Memory Quality"
+      },
+      {
+        "command": "devmemory.quarantineFlaggedSessions",
+        "title": "DevMemory AI: Quarantine Flagged Sessions"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "devmemory",
+          "title": "DevMemory AI",
+          "icon": "media/devmemory.svg"
+        }
+      ]
+    },
+    "views": {
+      "devmemory": [
+        {
+          "id": "devmemory.memoryView",
+          "name": "Project Memory"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "devmemory.refreshView",
+          "when": "view == devmemory.memoryView",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "DevMemory AI",
+      "properties": {
+        "devmemory.confirmBeforeScan": {
+          "type": "boolean",
+          "default": true,
+          "description": "Ask for explicit confirmation before scanning allowed workspace files."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "tsc -b --clean"
+  },
+  "dependencies": {
+    "@devmemory/core": "file:../../packages/core"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.90.0"
+  }
+}
