@@ -591,6 +591,60 @@ const DANGEROUS_COMMAND_PATTERNS: Array<{ pattern: RegExp; label: string }> = [
   { pattern: /\bdrop\s+database\b/i, label: "drop database" }
 ];
 
+const NONE_LINE_PATTERN = /^none\.?$/i;
+
+const GENERIC_CURRENT_STATE_PHRASES: RegExp[] = [
+  /^no project changes were made(?: in this session)?\.?$/i,
+  /^no work is currently in progress(?: from this session)?\.?$/i,
+  /^known issues:\s*none\.?$/i,
+  /^no known issues were identified(?: in this session)?\.?$/i
+];
+
+function stripBulletPrefix(line: string): string {
+  return line.replace(/^[\s\-*+•#>]+/, "").trim();
+}
+
+function isSectionEffectivelyEmpty(body: string | undefined): boolean {
+  if (!body) {
+    return true;
+  }
+  const trimmed = body.trim();
+  if (trimmed.length === 0) {
+    return true;
+  }
+  for (const rawLine of trimmed.split(/\r?\n/)) {
+    const stripped = stripBulletPrefix(rawLine);
+    if (stripped.length === 0) {
+      continue;
+    }
+    if (NONE_LINE_PATTERN.test(stripped)) {
+      continue;
+    }
+    return false;
+  }
+  return true;
+}
+
+function isCurrentStateEffectivelyEmpty(body: string | undefined): boolean {
+  if (isSectionEffectivelyEmpty(body)) {
+    return true;
+  }
+  for (const rawLine of body!.split(/\r?\n/)) {
+    const stripped = stripBulletPrefix(rawLine);
+    if (stripped.length === 0) {
+      continue;
+    }
+    if (NONE_LINE_PATTERN.test(stripped)) {
+      continue;
+    }
+    if (GENERIC_CURRENT_STATE_PHRASES.some((pattern) => pattern.test(stripped))) {
+      continue;
+    }
+    return false;
+  }
+  return true;
+}
+
 export async function parseSessionUpdatePreview(
   markdown: string,
   rootDir?: string
@@ -647,6 +701,20 @@ export async function parseSessionUpdatePreview(
       const more = missingFiles.length > 3 ? ` (+${missingFiles.length - 3} more)` : "";
       warnings.push(`Files Touched lists paths that do not exist in the workspace: ${sample}${more}.`);
     }
+  }
+
+  const allOptionalEmpty =
+    isSectionEffectivelyEmpty(parsed.get("SESSION_SUMMARY")) &&
+    isSectionEffectivelyEmpty(parsed.get("CHANGES_MADE")) &&
+    isSectionEffectivelyEmpty(parsed.get("FILES_TOUCHED")) &&
+    isSectionEffectivelyEmpty(parsed.get("DECISIONS")) &&
+    isSectionEffectivelyEmpty(parsed.get("BUGS_FIXED")) &&
+    isSectionEffectivelyEmpty(parsed.get("COMMANDS_RUN")) &&
+    isSectionEffectivelyEmpty(parsed.get("NEXT_ACTIONS")) &&
+    isCurrentStateEffectivelyEmpty(parsed.get("CURRENT_STATE"));
+
+  if (allOptionalEmpty) {
+    warnings.push("Session summary appears empty or non-informative.");
   }
 
   return { sections, missingRequired, warnings };

@@ -634,6 +634,242 @@ describe("initializeMemory managed-markdown policy", () => {
     expect(preview.missingRequired).not.toContain("NEXT_ACTIONS");
   });
 
+  it("parseSessionUpdatePreview warns when every section is empty or None", async () => {
+    const markdown = [
+      "## SESSION_SUMMARY",
+      "None",
+      "",
+      "## CHANGES_MADE",
+      "None",
+      "",
+      "## FILES_TOUCHED",
+      "",
+      "## DECISIONS",
+      "None",
+      "",
+      "## BUGS_FIXED",
+      "None",
+      "",
+      "## COMMANDS_RUN",
+      "None",
+      "",
+      "## CURRENT_STATE",
+      "None",
+      "",
+      "## NEXT_ACTIONS",
+      "None",
+      ""
+    ].join("\n");
+
+    const preview = await parseSessionUpdatePreview(markdown);
+
+    expect(preview.warnings).toContain("Session summary appears empty or non-informative.");
+  });
+
+  it("parseSessionUpdatePreview warns when CURRENT_STATE only contains generic 'no changes' phrases", async () => {
+    const markdown = [
+      "## SESSION_SUMMARY",
+      "None",
+      "",
+      "## CHANGES_MADE",
+      "None",
+      "",
+      "## FILES_TOUCHED",
+      "None",
+      "",
+      "## DECISIONS",
+      "None",
+      "",
+      "## BUGS_FIXED",
+      "None",
+      "",
+      "## COMMANDS_RUN",
+      "None",
+      "",
+      "## CURRENT_STATE",
+      "- No project changes were made",
+      "- No work is currently in progress",
+      "- Known issues: None",
+      "",
+      "## NEXT_ACTIONS",
+      "None",
+      ""
+    ].join("\n");
+
+    const preview = await parseSessionUpdatePreview(markdown);
+
+    expect(preview.warnings).toContain("Session summary appears empty or non-informative.");
+  });
+
+  it("parseSessionUpdatePreview does not warn when CURRENT_STATE has useful content", async () => {
+    const markdown = [
+      "## SESSION_SUMMARY",
+      "None",
+      "",
+      "## CHANGES_MADE",
+      "None",
+      "",
+      "## FILES_TOUCHED",
+      "None",
+      "",
+      "## DECISIONS",
+      "None",
+      "",
+      "## BUGS_FIXED",
+      "None",
+      "",
+      "## COMMANDS_RUN",
+      "None",
+      "",
+      "## CURRENT_STATE",
+      "- Working: /pricing endpoint is live in staging",
+      "",
+      "## NEXT_ACTIONS",
+      "None",
+      ""
+    ].join("\n");
+
+    const preview = await parseSessionUpdatePreview(markdown);
+
+    expect(preview.warnings).not.toContain("Session summary appears empty or non-informative.");
+  });
+
+  it("parseSessionUpdatePreview warns on a realistic empty AI response with bulleted None values", async () => {
+    const markdown = [
+      "## SESSION_SUMMARY",
+      "None",
+      "",
+      "## CHANGES_MADE",
+      "- None",
+      "",
+      "## FILES_TOUCHED",
+      "* None",
+      "",
+      "## DECISIONS",
+      "• None",
+      "",
+      "## BUGS_FIXED",
+      "- None",
+      "",
+      "## COMMANDS_RUN",
+      "- None",
+      "",
+      "## CURRENT_STATE",
+      "- No project changes were made in this session.",
+      "- No work is currently in progress from this session.",
+      "- No known issues were identified in this session.",
+      "",
+      "## NEXT_ACTIONS",
+      "- None",
+      ""
+    ].join("\n");
+
+    const preview = await parseSessionUpdatePreview(markdown);
+
+    expect(preview.warnings).toContain("Session summary appears empty or non-informative.");
+  });
+
+  it("parseSessionUpdatePreview does not warn when a section mixes a None bullet with useful content", async () => {
+    const markdown = [
+      "## SESSION_SUMMARY",
+      "None",
+      "",
+      "## CHANGES_MADE",
+      "None",
+      "",
+      "## FILES_TOUCHED",
+      "None",
+      "",
+      "## DECISIONS",
+      "None",
+      "",
+      "## BUGS_FIXED",
+      "None",
+      "",
+      "## COMMANDS_RUN",
+      "None",
+      "",
+      "## CURRENT_STATE",
+      "None",
+      "",
+      "## NEXT_ACTIONS",
+      "- None",
+      "- Add pricing tests",
+      ""
+    ].join("\n");
+
+    const preview = await parseSessionUpdatePreview(markdown);
+
+    expect(preview.warnings).not.toContain("Session summary appears empty or non-informative.");
+  });
+
+  it("parseSessionUpdatePreview treats the long generic CURRENT_STATE variants as effectively empty", async () => {
+    const markdown = [
+      "## SESSION_SUMMARY",
+      "None",
+      "",
+      "## CHANGES_MADE",
+      "None",
+      "",
+      "## FILES_TOUCHED",
+      "None",
+      "",
+      "## DECISIONS",
+      "None",
+      "",
+      "## BUGS_FIXED",
+      "None",
+      "",
+      "## COMMANDS_RUN",
+      "None",
+      "",
+      "## CURRENT_STATE",
+      "- No project changes were made in this session",
+      "- No work is currently in progress from this session",
+      "",
+      "## NEXT_ACTIONS",
+      "None",
+      ""
+    ].join("\n");
+
+    const preview = await parseSessionUpdatePreview(markdown);
+
+    expect(preview.warnings).toContain("Session summary appears empty or non-informative.");
+  });
+
+  it("parseSessionUpdatePreview does not warn when NEXT_ACTIONS has useful content", async () => {
+    const markdown = [
+      "## SESSION_SUMMARY",
+      "None",
+      "",
+      "## CHANGES_MADE",
+      "None",
+      "",
+      "## FILES_TOUCHED",
+      "None",
+      "",
+      "## DECISIONS",
+      "None",
+      "",
+      "## BUGS_FIXED",
+      "None",
+      "",
+      "## COMMANDS_RUN",
+      "None",
+      "",
+      "## CURRENT_STATE",
+      "None",
+      "",
+      "## NEXT_ACTIONS",
+      "- Add /pricing tests covering tax edge cases",
+      ""
+    ].join("\n");
+
+    const preview = await parseSessionUpdatePreview(markdown);
+
+    expect(preview.warnings).not.toContain("Session summary appears empty or non-informative.");
+  });
+
   it("parseSessionUpdatePreview never writes files", async () => {
     const memoryDirBefore = await fs.readdir(tempDir);
     const memoryDirExistsBefore = memoryDirBefore.includes(".ai-memory");
