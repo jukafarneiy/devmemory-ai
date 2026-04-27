@@ -9,21 +9,13 @@
     "vscode": "^1.90.0"
   },
   "categories": ["Other"],
-  "activationEvents": [
-    "onCommand:devmemory.initializeProject",
-    "onCommand:devmemory.generateResumePrompt",
-    "onCommand:devmemory.addSessionSummary",
-    "onCommand:devmemory.openMemoryFolder",
-    "onCommand:devmemory.openScanReport",
-    "onCommand:devmemory.generateBootstrapPrompt",
-    "onCommand:devmemory.applyBootstrapMemory",
-    "onCommand:devmemory.generateSessionEndPrompt",
-    "onCommand:devmemory.applySessionUpdate",
-    "onCommand:devmemory.refreshView",
-    "onCommand:devmemory.runHealthCheck",
-    "onCommand:devmemory.quarantineFlaggedSessions",
-    "onView:devmemory.memoryView"
-  ],
+  "icon": "media/icon.png",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jukafarneiy/devmemory-ai.git",
+    "directory": "apps/vscode-extension"
+  },
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
@@ -116,12 +108,15 @@
   },
   "scripts": {
     "build": "tsc -b",
-    "clean": "tsc -b --clean"
-  },
-  "dependencies": {
-    "@devmemory/core": "file:../../packages/core"
+    "clean": "tsc -b --clean",
+    "bundle": "esbuild src/extension.ts --bundle --platform=node --target=node18 --format=cjs --external:vscode --outfile=dist/extension.js",
+    "vscode:prepublish": "npm run build && npm run bundle",
+    "package": "vsce package --no-dependencies"
   },
   "devDependencies": {
-    "@types/vscode": "^1.90.0"
+    "@devmemory/core": "file:../../packages/core",
+    "@types/vscode": "^1.90.0",
+    "@vscode/vsce": "^3.2.1",
+    "esbuild": "^0.24.0"
   }
 }

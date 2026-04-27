@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "description": "Local-first persistent memory for AI-assisted software projects.",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jukafarneiy/devmemory-ai.git"
+  },
   "workspaces": [
     "packages/*",
     "apps/*"
@@ -10,7 +15,9 @@
   "scripts": {
     "build": "tsc -b",
     "clean": "tsc -b --clean",
-    "test": "vitest run"
+    "test": "vitest run",
+    "prepackage:vscode": "npm run build && npm run test",
+    "package:vscode": "npm run package -w apps/vscode-extension"
   },
   "devDependencies": {
     "@types/node": "^20.12.12",

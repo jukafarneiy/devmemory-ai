@@ -3,6 +3,7 @@ dist/
 out/
 coverage/
 *.tsbuildinfo
+*.vsix
 .DS_Store
 .env
 .env.*
