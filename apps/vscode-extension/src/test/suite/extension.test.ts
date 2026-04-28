@@ -21,6 +21,8 @@ function workspaceFolder(): string {
   return folders[0].uri.fsPath;
 }
 
+const capturedInfoMessages: string[] = [];
+
 suite("DevMemory AI extension smoke", () => {
   let originalShowInfo: typeof vscode.window.showInformationMessage;
   let originalShowWarn: typeof vscode.window.showWarningMessage;
@@ -28,7 +30,12 @@ suite("DevMemory AI extension smoke", () => {
   suiteSetup(async () => {
     originalShowInfo = vscode.window.showInformationMessage;
     originalShowWarn = vscode.window.showWarningMessage;
-    (vscode.window as any).showInformationMessage = async () => undefined;
+    (vscode.window as any).showInformationMessage = async (message: unknown) => {
+      if (typeof message === "string") {
+        capturedInfoMessages.push(message);
+      }
+      return undefined;
+    };
     (vscode.window as any).showWarningMessage = async () => undefined;
 
     await vscode.workspace
@@ -84,12 +91,28 @@ suite("DevMemory AI extension smoke", () => {
       !/^[-*]\s+`?\.env`?\s*$/m.test(scanReport),
       "scan-report.md should not list .env as a tracked file"
     );
+
+    const initMessage = capturedInfoMessages.find((m) => m.startsWith("Memory set up"));
+    assert.ok(initMessage, "expected a 'Memory set up' info message");
+    assert.match(
+      initMessage!,
+      /Teach DevMemory About This Project/,
+      "post-init message should point at the Teach DevMemory next step"
+    );
   });
 
-  test("generateResumePrompt creates prompts/resume-prompt.md", async () => {
+  test("generateResumePrompt creates prompts/resume-prompt.md and points at End AI Session", async () => {
     const root = workspaceFolder();
     await vscode.commands.executeCommand("devmemory.generateResumePrompt");
     const promptPath = path.join(root, ".ai-memory", "prompts", "resume-prompt.md");
     assert.ok(existsSync(promptPath), `${promptPath} should exist`);
+
+    const resumeMessage = capturedInfoMessages.find((m) => m.startsWith("Resume prompt copied"));
+    assert.ok(resumeMessage, "expected a 'Resume prompt copied' info message");
+    assert.match(
+      resumeMessage!,
+      /End AI Session/,
+      "post-resume message should point at the End AI Session next step"
+    );
   });
 });

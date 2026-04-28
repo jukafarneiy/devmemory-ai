@@ -23,7 +23,7 @@ let treeProvider: DevMemoryTreeProvider;
 export function activate(context: vscode.ExtensionContext): void {
   statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
   statusBarItem.text = "$(book) DevMemory";
-  statusBarItem.tooltip = "Generate DevMemory AI resume prompt";
+  statusBarItem.tooltip = "DevMemory AI: copy a fresh resume prompt for your next AI session.";
   statusBarItem.command = "devmemory.generateResumePrompt";
   statusBarItem.show();
 
@@ -103,11 +103,17 @@ async function initializeProjectCommand(): Promise<void> {
   const detected = result.scan.detectedProfiles.map((profile) => profile.label);
   const detectedSentence =
     detected.length > 0 ? `Detected: ${detected.join(", ")}.` : "No specific stack detected.";
-  const message = `DevMemory AI initialized. ${detectedSentence} Tracked ${result.scan.files.length} files and skipped ${result.scan.skipped.length}.`;
+  const message = `Memory set up. ${detectedSentence} Tracked ${result.scan.files.length} files, skipped ${result.scan.skipped.length}. Next: Teach DevMemory About This Project.`;
 
-  const action = await vscode.window.showInformationMessage(message, "View Scan Report");
+  const action = await vscode.window.showInformationMessage(
+    message,
+    "Teach DevMemory",
+    "View Scan Report"
+  );
 
-  if (action === "View Scan Report") {
+  if (action === "Teach DevMemory") {
+    await generateBootstrapPromptCommand();
+  } else if (action === "View Scan Report") {
     const config = await loadConfig(rootDir);
     const memoryDir = resolveMemoryDir(rootDir, config);
     await openMarkdownFile(path.join(memoryDir, "scan-report.md"));
@@ -132,11 +138,14 @@ async function generateResumePromptCommand(): Promise<void> {
   await vscode.env.clipboard.writeText(extractTextPrompt(result.prompt));
   treeProvider.refresh();
   const action = await vscode.window.showInformationMessage(
-    "Resume prompt copied to clipboard.",
+    "Resume prompt copied to clipboard. Paste it into your AI before starting work. When you're done, click End AI Session.",
+    "End AI Session",
     "Open Prompt"
   );
 
-  if (action === "Open Prompt") {
+  if (action === "End AI Session") {
+    await generateSessionEndPromptCommand();
+  } else if (action === "Open Prompt") {
     await openMarkdownFile(result.promptPath);
   }
 }
@@ -188,15 +197,15 @@ async function generateBootstrapPromptCommand(): Promise<void> {
   await setPendingAction(rootDir, "save-project-understanding");
   treeProvider.refresh();
   const action = await vscode.window.showInformationMessage(
-    "Bootstrap prompt copied. Paste it into your AI assistant, copy the response, then save the project understanding.",
-    "Open Prompt",
-    "Save Project Understanding"
+    "Bootstrap prompt copied to clipboard. Paste it into your AI assistant, copy the AI's response, then click Save Project Understanding.",
+    "Save Project Understanding",
+    "Open Prompt"
   );
 
-  if (action === "Open Prompt") {
-    await openMarkdownFile(result.promptPath);
-  } else if (action === "Save Project Understanding") {
+  if (action === "Save Project Understanding") {
     await applyBootstrapMemoryCommand();
+  } else if (action === "Open Prompt") {
+    await openMarkdownFile(result.promptPath);
   }
 }
 
@@ -274,11 +283,14 @@ async function applyBootstrapMemoryCommand(): Promise<void> {
   treeProvider.refresh();
 
   const action = await vscode.window.showInformationMessage(
-    `Project understanding saved. Resume prompt regenerated. Updated ${result.filesWritten.length} files.`,
+    `Project understanding saved. Updated ${result.filesWritten.length} files. Next: Start AI Session.`,
+    "Start AI Session",
     "Open Resume Prompt"
   );
 
-  if (action === "Open Resume Prompt") {
+  if (action === "Start AI Session") {
+    await generateResumePromptCommand();
+  } else if (action === "Open Resume Prompt") {
     await openMarkdownFile(resume.promptPath);
   }
 }
@@ -302,15 +314,15 @@ async function generateSessionEndPromptCommand(): Promise<void> {
   await setPendingAction(rootDir, "save-session-summary");
   treeProvider.refresh();
   const action = await vscode.window.showInformationMessage(
-    "Session end prompt copied. Paste it into your AI assistant, copy the response, then save the session summary.",
-    "Open Prompt",
-    "Save Session Summary"
+    "Session end prompt copied to clipboard. Paste it into your AI at the end of the session, copy the AI's structured response, then click Save Session Summary.",
+    "Save Session Summary",
+    "Open Prompt"
   );
 
-  if (action === "Open Prompt") {
-    await openMarkdownFile(result.promptPath);
-  } else if (action === "Save Session Summary") {
+  if (action === "Save Session Summary") {
     await applySessionUpdateCommand();
+  } else if (action === "Open Prompt") {
+    await openMarkdownFile(result.promptPath);
   }
 }
 
@@ -380,13 +392,29 @@ async function applySessionUpdateCommand(): Promise<void> {
   const resume = await generateResumePrompt(rootDir);
   treeProvider.refresh();
 
-  const warningSuffix = preview.warnings.length > 0 ? " Saved with warnings." : "";
+  if (preview.warnings.length > 0) {
+    const action = await vscode.window.showInformationMessage(
+      `Session summary saved with warnings. Updated ${result.filesWritten.length} files. Review Memory Quality when possible.`,
+      "Check Memory Quality",
+      "Open Resume Prompt"
+    );
+    if (action === "Check Memory Quality") {
+      await runHealthCheckCommand();
+    } else if (action === "Open Resume Prompt") {
+      await openMarkdownFile(resume.promptPath);
+    }
+    return;
+  }
+
   const action = await vscode.window.showInformationMessage(
-    `Session summary saved. Resume prompt regenerated. Updated ${result.filesWritten.length} files.${warningSuffix}`,
+    `Session summary saved. Updated ${result.filesWritten.length} files. Next: Start AI Session when you continue.`,
+    "Start AI Session",
     "Open Resume Prompt"
   );
 
-  if (action === "Open Resume Prompt") {
+  if (action === "Start AI Session") {
+    await generateResumePromptCommand();
+  } else if (action === "Open Resume Prompt") {
     await openMarkdownFile(resume.promptPath);
   }
 }
@@ -637,6 +665,19 @@ interface NextStepDefinition {
   tooltip: string;
 }
 
+const TEACH_DEVMEMORY_TOOLTIP =
+  "Copies a stack-aware prompt to your clipboard. Paste it into your AI, then come back and click Save Project Understanding once the AI has replied.";
+const SAVE_PROJECT_UNDERSTANDING_TOOLTIP =
+  "Reads the AI's project-understanding response from your clipboard and saves it into project memory. Run \"Teach DevMemory About This Project\" first if your clipboard is empty.";
+const START_AI_SESSION_TOOLTIP =
+  "Copies a fresh resume prompt to your clipboard. Paste it into your AI before starting work. When you're done, click End AI Session.";
+const END_AI_SESSION_TOOLTIP =
+  "Copies a wrap-up prompt to your clipboard. Paste it into the AI at the end of the session, then click Save Session Summary.";
+const SAVE_SESSION_SUMMARY_TOOLTIP =
+  "Reads the AI's session-end response from your clipboard, previews warnings, and updates current-state, next-actions, and the session log. Run \"End AI Session\" first.";
+const CHECK_MEMORY_QUALITY_TOOLTIP =
+  "Audits the local memory store for placeholders, missing files, and sessions applied with warnings, and writes a report.";
+
 const NEXT_STEP_BY_STATE: Record<FlowStateKind, NextStepDefinition[]> = {
   "no-workspace": [],
   "needs-attention": [
@@ -644,7 +685,8 @@ const NEXT_STEP_BY_STATE: Record<FlowStateKind, NextStepDefinition[]> = {
       label: "Set Up Memory",
       command: "devmemory.initializeProject",
       codicon: "rocket",
-      tooltip: "Re-run setup to repair the local memory store."
+      tooltip:
+        "Re-runs setup to repair the local memory store. After it completes, the next step is Teach DevMemory About This Project."
     }
   ],
   "not-set-up": [
@@ -652,7 +694,8 @@ const NEXT_STEP_BY_STATE: Record<FlowStateKind, NextStepDefinition[]> = {
       label: "Set Up Memory",
       command: "devmemory.initializeProject",
       codicon: "rocket",
-      tooltip: "Scan the workspace and create the local memory store."
+      tooltip:
+        "Scans the workspace and creates the local .ai-memory store. After it completes, the next step is Teach DevMemory About This Project."
     }
   ],
   "needs-understanding": [
@@ -660,13 +703,13 @@ const NEXT_STEP_BY_STATE: Record<FlowStateKind, NextStepDefinition[]> = {
       label: "Teach DevMemory About This Project",
       command: "devmemory.generateBootstrapPrompt",
       codicon: "lightbulb",
-      tooltip: "Copy a prompt that asks your AI assistant to describe this project."
+      tooltip: TEACH_DEVMEMORY_TOOLTIP
     },
     {
       label: "Save Project Understanding",
       command: "devmemory.applyBootstrapMemory",
       codicon: "save",
-      tooltip: "After the AI replies, copy the response and click this to save it."
+      tooltip: SAVE_PROJECT_UNDERSTANDING_TOOLTIP
     }
   ],
   "ready": [
@@ -674,7 +717,7 @@ const NEXT_STEP_BY_STATE: Record<FlowStateKind, NextStepDefinition[]> = {
       label: "Start AI Session",
       command: "devmemory.generateResumePrompt",
       codicon: "play",
-      tooltip: "Generate a fresh resume prompt to feed the AI before your next session."
+      tooltip: START_AI_SESSION_TOOLTIP
     }
   ],
   "needs-review": [
@@ -682,7 +725,7 @@ const NEXT_STEP_BY_STATE: Record<FlowStateKind, NextStepDefinition[]> = {
       label: "Check Memory Quality",
       command: "devmemory.runHealthCheck",
       codicon: "pulse",
-      tooltip: "Re-run the health check and review the report."
+      tooltip: CHECK_MEMORY_QUALITY_TOOLTIP
     }
   ]
 };
@@ -692,19 +735,19 @@ const DAILY_WORKFLOW_ACTIONS: NextStepDefinition[] = [
     label: "Start AI Session",
     command: "devmemory.generateResumePrompt",
     codicon: "play",
-    tooltip: "Copy a fresh resume prompt for the next AI session."
+    tooltip: START_AI_SESSION_TOOLTIP
   },
   {
     label: "End AI Session",
     command: "devmemory.generateSessionEndPrompt",
     codicon: "stop-circle",
-    tooltip: "Copy a wrap-up prompt for your AI assistant."
+    tooltip: END_AI_SESSION_TOOLTIP
   },
   {
     label: "Save Session Summary",
     command: "devmemory.applySessionUpdate",
     codicon: "cloud-upload",
-    tooltip: "After the AI replies, copy the response and click this to update memory."
+    tooltip: SAVE_SESSION_SUMMARY_TOOLTIP
   }
 ];
 
@@ -713,19 +756,19 @@ const REVIEW_ACTIONS: NextStepDefinition[] = [
     label: "Check Memory Quality",
     command: "devmemory.runHealthCheck",
     codicon: "pulse",
-    tooltip: "Look for placeholders, missing files and sessions applied with warnings."
+    tooltip: CHECK_MEMORY_QUALITY_TOOLTIP
   },
   {
     label: "View Scan Report",
     command: "devmemory.openScanReport",
     codicon: "checklist",
-    tooltip: "Open the latest scan report (which files were tracked or skipped)."
+    tooltip: "Opens the latest scan report so you can see which files were tracked or skipped."
   },
   {
     label: "Open Memory Files",
     command: "devmemory.openMemoryFolder",
     codicon: "folder-opened",
-    tooltip: "Open the project summary file in the editor."
+    tooltip: "Opens the project-summary markdown file. Use this to inspect what DevMemory currently knows."
   }
 ];
 
@@ -734,13 +777,13 @@ const ADVANCED_ACTIONS: NextStepDefinition[] = [
     label: "Save Project Understanding",
     command: "devmemory.applyBootstrapMemory",
     codicon: "save",
-    tooltip: "Apply the AI's bootstrap response (after \"Teach DevMemory\")."
+    tooltip: SAVE_PROJECT_UNDERSTANDING_TOOLTIP
   },
   {
     label: "Refresh View",
     command: "devmemory.refreshView",
     codicon: "refresh",
-    tooltip: "Re-read the local memory state."
+    tooltip: "Re-reads the local memory state and updates the sidebar."
   }
 ];
 
@@ -829,10 +872,10 @@ class DevMemoryTreeProvider implements vscode.TreeDataProvider<vscode.TreeItem> 
     let nextTooltip = "Open a workspace folder to enable DevMemory AI.";
     if (primary && nextSteps.length > 1) {
       nextDescription = primary.label;
-      nextTooltip = `Click "${primary.label}" first, then "${nextSteps[1].label}" once the AI replies.`;
+      nextTooltip = `Click "${primary.label}" first, then "${nextSteps[1].label}" once the AI has replied and you've copied its response.`;
     } else if (primary) {
       nextDescription = primary.label;
-      nextTooltip = `Click "${primary.label}" under "Next Step" to proceed.`;
+      nextTooltip = `Under "Next Step", click "${primary.label}". ${primary.tooltip}`;
     }
 
     items.push(
@@ -1005,14 +1048,14 @@ const SAVE_SESSION_SUMMARY_ACTION: NextStepDefinition = {
   label: "Save Session Summary",
   command: "devmemory.applySessionUpdate",
   codicon: "cloud-upload",
-  tooltip: "After the AI replies, copy the response and click this to update memory."
+  tooltip: SAVE_SESSION_SUMMARY_TOOLTIP
 };
 
 const END_AI_SESSION_ACTION: NextStepDefinition = {
   label: "End AI Session",
   command: "devmemory.generateSessionEndPrompt",
   codicon: "stop-circle",
-  tooltip: "Copy a wrap-up prompt for your AI assistant."
+  tooltip: END_AI_SESSION_TOOLTIP
 };
 
 function resolveNextSteps(state: FlowState): NextStepDefinition[] {
