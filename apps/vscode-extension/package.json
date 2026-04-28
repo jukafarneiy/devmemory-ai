@@ -83,6 +83,10 @@
       {
         "command": "devmemory.quarantineFlaggedSessions",
         "title": "DevMemory AI: Quarantine Flagged Sessions"
+      },
+      {
+        "command": "devmemory.exportAIContextFiles",
+        "title": "DevMemory AI: Export AI Context Files"
       }
     ],
     "viewsContainers": {

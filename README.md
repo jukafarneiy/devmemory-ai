@@ -47,7 +47,9 @@ DevMemory **does not replace** the native context features of Claude Code, Curso
 | GitHub Copilot custom instructions | Per-user / per-repo prompt prefix | GitHub-side configuration | No (Copilot) | No |
 | **DevMemory AI** | Project summary, architecture, current state, next actions, decisions log, bugs log, validated session logs | Local `.ai-memory/` (Markdown + JSON), git-versionable | Yes (clipboard) | Yes (validated, with warnings persisted) |
 
-If you already maintain a hand-written `CLAUDE.md` or `.cursorrules` and you're happy, you don't need DevMemory. If you want that context **generated, validated, audited, and portable across AIs**, DevMemory is the layer that does it. The two coexist — DevMemory's outputs are just Markdown sections that paste cleanly into either workflow.
+If you already maintain a hand-written `CLAUDE.md` or `.cursorrules` and you're happy, you don't need DevMemory. If you want that context **generated, validated, audited, and portable across AIs**, DevMemory is the layer that does it.
+
+DevMemory and the native files coexist. Run **DevMemory AI: Export AI Context Files** to write a clearly marked block (`<!-- devmemory:managed:start --> … <!-- devmemory:managed:end -->`) into `CLAUDE.md`, `AGENTS.md`, `.github/copilot-instructions.md`, and (optionally) `.cursorrules`. Anything outside the markers is preserved on every export — your hand-written rules stay intact, and the managed block is updated in place when you re-run the command.
 
 ## 5-step flow
 

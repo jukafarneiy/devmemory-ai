@@ -2,20 +2,24 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import * as vscode from "vscode";
 import {
+  AI_CONTEXT_TARGETS,
   addSessionSummary,
   applyBootstrapMemory,
   applySessionUpdate,
+  exportAIContextFiles,
   extractTextPrompt,
   generateBootstrapPrompt,
   generateResumePrompt,
   generateSessionEndPrompt,
   initializeMemory,
+  inspectAIContextMemory,
   loadConfig,
   parseSessionUpdatePreview,
   quarantineFlaggedSessions,
   resolveMemoryDir,
   runMemoryHealthCheck
 } from "@devmemory/core";
+import type { AIContextTarget } from "@devmemory/core";
 
 let statusBarItem: vscode.StatusBarItem;
 let treeProvider: DevMemoryTreeProvider;
@@ -50,6 +54,10 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand(
       "devmemory.quarantineFlaggedSessions",
       quarantineFlaggedSessionsCommand
+    ),
+    vscode.commands.registerCommand(
+      "devmemory.exportAIContextFiles",
+      exportAIContextFilesCommand
     )
   );
 
@@ -557,6 +565,91 @@ async function quarantineFlaggedSessionsCommand(): Promise<void> {
   }
 }
 
+async function exportAIContextFilesCommand(): Promise<void> {
+  const rootDir = getWorkspaceRoot();
+  if (!rootDir || !ensureWorkspaceTrusted()) {
+    return;
+  }
+
+  const inspection = await inspectAIContextMemory(rootDir);
+  if (inspection.kind === "missing") {
+    const action = await vscode.window.showWarningMessage(
+      "DevMemory memory is incomplete. Run \"Set Up Memory\" and then \"Teach DevMemory About This Project\" before exporting AI context files.",
+      "Set Up Memory"
+    );
+    if (action === "Set Up Memory") {
+      await initializeProjectCommand();
+    }
+    return;
+  }
+
+  if (inspection.kind === "placeholders") {
+    const fileList = inspection.files.join(", ");
+    const action = await vscode.window.showWarningMessage(
+      `DevMemory memory still contains placeholder content (${fileList}). Run "Teach DevMemory About This Project" so the AI replaces it before exporting.`,
+      "Teach DevMemory"
+    );
+    if (action === "Teach DevMemory") {
+      await generateBootstrapPromptCommand();
+    }
+    return;
+  }
+
+  interface TargetPick extends vscode.QuickPickItem {
+    target: AIContextTarget;
+  }
+
+  const items: TargetPick[] = AI_CONTEXT_TARGETS.map((target) => ({
+    label: target.label,
+    detail: target.filePath,
+    target,
+    picked: target.id !== "cursorrules"
+  }));
+
+  const picks = await vscode.window.showQuickPick<TargetPick>(items, {
+    title: "DevMemory AI: Export AI Context Files",
+    placeHolder:
+      "Pick which context files to write or refresh. Existing human content outside the managed block is preserved.",
+    canPickMany: true,
+    ignoreFocusOut: true
+  });
+
+  if (!picks || picks.length === 0) {
+    return;
+  }
+
+  let results;
+  try {
+    results = await vscode.window.withProgress(
+      {
+        location: vscode.ProgressLocation.Notification,
+        title: "Exporting DevMemory AI context files",
+        cancellable: false
+      },
+      () => exportAIContextFiles(rootDir, { targets: picks.map((p) => p.target) })
+    );
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    await vscode.window.showErrorMessage(`AI context export failed: ${message}`);
+    return;
+  }
+
+  if (results.length === 0) {
+    return;
+  }
+
+  const summary = results
+    .map((r) => `${r.action} ${path.relative(rootDir, r.filePath)}`)
+    .join(", ");
+  const action = await vscode.window.showInformationMessage(
+    `AI context export complete. ${summary}.`,
+    "Open First File"
+  );
+  if (action === "Open First File") {
+    await openMarkdownFile(results[0].filePath);
+  }
+}
+
 function getWorkspaceRoot(): string | undefined {
   const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
 
@@ -778,6 +871,13 @@ const ADVANCED_ACTIONS: NextStepDefinition[] = [
     command: "devmemory.applyBootstrapMemory",
     codicon: "save",
     tooltip: SAVE_PROJECT_UNDERSTANDING_TOOLTIP
+  },
+  {
+    label: "Export AI Context Files",
+    command: "devmemory.exportAIContextFiles",
+    codicon: "export",
+    tooltip:
+      "Writes a managed block (CLAUDE.md, AGENTS.md, .github/copilot-instructions.md, .cursorrules) from the current memory. Hand-written content outside the markers is preserved on every export."
   },
   {
     label: "Refresh View",

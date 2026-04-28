@@ -12,7 +12,8 @@ const EXPECTED_COMMANDS = [
   "devmemory.generateResumePrompt",
   "devmemory.generateSessionEndPrompt",
   "devmemory.applySessionUpdate",
-  "devmemory.runHealthCheck"
+  "devmemory.runHealthCheck",
+  "devmemory.exportAIContextFiles"
 ];
 
 function workspaceFolder(): string {
