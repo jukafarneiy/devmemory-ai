@@ -4,11 +4,15 @@
   "description": "Local, auditable project memory for AI coding sessions. Workspace-only Markdown, no telemetry, no network calls — built for security-conscious engineering teams.",
   "version": "0.1.0",
   "private": true,
+  "preview": true,
   "publisher": "devmemory-ai",
   "engines": {
     "vscode": "^1.90.0"
   },
   "categories": ["AI", "Other"],
+  "bugs": {
+    "url": "https://github.com/jukafarneiy/devmemory-ai/issues"
+  },
   "keywords": [
     "ai",
     "memory",

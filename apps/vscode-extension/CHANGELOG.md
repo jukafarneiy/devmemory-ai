@@ -1,17 +1,22 @@
 # Changelog
 
-## 0.1.0 — First beta (2026-04-27)
+## 0.1.0 — First beta (2026-04-28)
 
 First installable beta of the DevMemory AI VS Code extension. Distributed as a `.vsix`; not on the Marketplace yet.
 
+### Positioning
+
+DevMemory AI is positioned as **local, auditable project memory for AI coding sessions in security-conscious engineering teams** (fintech, healthtech, govtech, defense, consultancies under NDA). Workspace-only, no telemetry, no network, AI-agnostic via clipboard.
+
 ### Guided flow
 
-- **Set Up Memory** — workspace scan and `.ai-memory/` scaffold.
+- **Set Up Memory** — workspace scan with ~140 strict exclusion patterns and `.ai-memory/` scaffold.
 - **Teach DevMemory About This Project** / **Save Project Understanding** — bootstrap memory with help from any AI assistant via clipboard.
 - **Start AI Session** — generates a resume prompt that primes the AI with current project memory.
 - **End AI Session** / **Save Session Summary** — wrap-up prompt and validated apply step that updates `current-state.md`, `tasks/next-actions.md`, and writes a session log under `.ai-memory/sessions/`.
 - **Check Memory Quality** — writes `.ai-memory/health-check.md` and surfaces missing files, leftover placeholders, sessions with warnings, and manifest issues.
 - **Quarantine Flagged Sessions** — moves session logs containing a `## DevMemory Warnings` block into `.ai-memory/quarantine/sessions/`.
+- **Export AI Context Files** — writes a clearly marked managed block (`<!-- devmemory:managed:start --> … <!-- devmemory:managed:end -->`) into `CLAUDE.md`, `AGENTS.md`, `.github/copilot-instructions.md`, and (optionally) `.cursorrules`. Existing human content outside the markers is preserved on every export.
 
 ### Safety guardrails
 
@@ -22,8 +27,10 @@ First installable beta of the DevMemory AI VS Code extension. Distributed as a `
   - paths in `FILES_TOUCHED` that don't exist in the workspace,
   - sessions that look empty or non-informative (all sections `None`/empty, including bulleted `- None`, or `CURRENT_STATE` reduced to generic "no changes / no work / known issues: none" phrases).
 - Warnings never block the apply — they're persisted into the session log under `## DevMemory Warnings` so health checks can find them.
+- *Export AI Context Files* refuses to write when memory is missing or still contains placeholder content; never overwrites human-authored content outside the managed markers.
 
-### Packaging
+### Packaging & verification
 
 - Extension is bundled with esbuild into a single `dist/extension.js`, so the `.vsix` does not need to ship `node_modules` or the `@devmemory/core` workspace package.
-- `npm run package:vscode` from the repo root produces the `.vsix`.
+- `npm run package:vscode` from the repo root produces and **verifies** the `.vsix` (cross-platform, yauzl-based: required files present, forbidden paths absent, packaged `package.json` shape is correct, size under 500 KB).
+- 116 unit tests in core, 4 smoke tests inside the VS Code extension host (via `@vscode/test-electron`).
