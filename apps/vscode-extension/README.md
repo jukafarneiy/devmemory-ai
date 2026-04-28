@@ -36,6 +36,8 @@ A **DevMemory AI** icon appears in the Activity Bar.
 
 ## 5-step flow
 
+![DevMemory AI sidebar with the guided next-step flow](https://raw.githubusercontent.com/jukafarneiy/devmemory-ai/main/apps/vscode-extension/media/marketplace/02-sidebar.png)
+
 Open the **DevMemory AI** view in the Activity Bar — the sidebar always shows the next recommended action.
 
 1. **Set Up Memory** — scans the workspace and creates `.ai-memory/` with a manifest, scan report, and starter files.
