@@ -5,7 +5,7 @@ test/**
 dist/test/**
 **/*.test.*
 **/*.ts
-!media/**
+media/marketplace/**
 **/*.map
 **/*.tsbuildinfo
 **/tsconfig*.json
