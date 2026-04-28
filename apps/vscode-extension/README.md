@@ -28,12 +28,12 @@ npm install
 npm run package:vscode
 ```
 
-`npm run package:vscode` runs build + tests, packages the extension with esbuild bundling, strips devDependencies from the shipped `package.json`, and verifies the resulting VSIX. Output: `apps/vscode-extension/devmemory-ai-vscode-0.1.1.vsix`.
+`npm run package:vscode` runs build + tests, packages the extension with esbuild bundling, strips devDependencies from the shipped `package.json`, and verifies the resulting VSIX. Output: `apps/vscode-extension/devmemory-ai-vscode-0.1.2.vsix`.
 
 Install in VS Code: `Extensions` view → `…` menu → **Install from VSIX…** → pick the `.vsix`. Or from the CLI:
 
 ```bash
-code --install-extension apps/vscode-extension/devmemory-ai-vscode-0.1.1.vsix
+code --install-extension apps/vscode-extension/devmemory-ai-vscode-0.1.2.vsix
 ```
 
 A **DevMemory AI** icon appears in the Activity Bar.

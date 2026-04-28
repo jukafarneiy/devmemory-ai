@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.2 — Marketplace icon refresh (2026-04-28)
+
+- Replaced the Marketplace / extension icon with the DevMemory AI waveform mark.
+- Kept the Activity Bar icon aligned with the same visual identity.
+
 ## 0.1.1 — Marketplace Preview copy update (2026-04-28)
 
 - Published as a Visual Studio Marketplace Preview extension under the `devmemory-ai` publisher.

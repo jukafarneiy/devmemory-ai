@@ -2,7 +2,7 @@
   "name": "devmemory-ai-vscode",
   "displayName": "DevMemory AI",
   "description": "Local, auditable project memory for AI coding sessions. Workspace-only Markdown, no telemetry, no network calls — built for security-conscious engineering teams.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "preview": true,
   "publisher": "devmemory-ai",
   "engines": {

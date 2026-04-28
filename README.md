@@ -115,7 +115,7 @@ npm run package:vscode
    - the packaged `package.json` has no runtime `@devmemory/core` dependency, no `file:../../` workspace links, and includes `icon`, `license`, `repository`, while having no `activationEvents`;
    - the VSIX is under 500 KB.
 
-The output is `apps/vscode-extension/devmemory-ai-vscode-0.1.1.vsix`. Install with `code --install-extension <path>` or via VS Code's *Install from VSIX…* action. The public Marketplace listing is at <https://marketplace.visualstudio.com/items?itemName=devmemory-ai.devmemory-ai-vscode>.
+The output is `apps/vscode-extension/devmemory-ai-vscode-0.1.2.vsix`. Install with `code --install-extension <path>` or via VS Code's *Install from VSIX…* action. The public Marketplace listing is at <https://marketplace.visualstudio.com/items?itemName=devmemory-ai.devmemory-ai-vscode>.
 
 ### Extension smoke tests
 

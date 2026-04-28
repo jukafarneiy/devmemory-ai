@@ -1,6 +1,6 @@
 {
   "name": "devmemory-ai",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "description": "Local, auditable project memory for AI coding sessions in security-conscious engineering teams.",
   "license": "SEE LICENSE IN LICENSE.md",
