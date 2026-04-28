@@ -1,14 +1,30 @@
 {
   "name": "devmemory-ai-vscode",
   "displayName": "DevMemory AI",
-  "description": "Local-first persistent memory for AI coding sessions.",
+  "description": "Local, auditable project memory for AI coding sessions. Workspace-only Markdown, no telemetry, no network calls — built for security-conscious engineering teams.",
   "version": "0.1.0",
   "private": true,
   "publisher": "devmemory-ai",
   "engines": {
     "vscode": "^1.90.0"
   },
-  "categories": ["Other"],
+  "categories": ["AI", "Other"],
+  "keywords": [
+    "ai",
+    "memory",
+    "context",
+    "local-first",
+    "audit",
+    "compliance",
+    "security",
+    "governance",
+    "claude",
+    "claude-md",
+    "copilot",
+    "cursor",
+    "session",
+    "markdown"
+  ],
   "icon": "media/icon.png",
   "license": "SEE LICENSE IN LICENSE.md",
   "repository": {
