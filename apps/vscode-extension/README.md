@@ -11,7 +11,7 @@ This beta is distributed as a `.vsix` file and is **not** on the Marketplace yet
    npm install
    npm run package:vscode
    ```
-   `package:vscode` runs `prepackage:vscode` automatically (build + tests) before invoking `vsce package`. The result is `apps/vscode-extension/devmemory-ai-vscode-0.1.0.vsix`.
+   `npm run package:vscode` is the single command for the whole pipeline: it runs `prepackage:vscode` (build + tests) automatically, invokes `vsce package` against a sanitized manifest (devDependencies stripped from the packaged `package.json`), and then verifies the resulting VSIX with `scripts/verify-vsix.mjs`. The result is `apps/vscode-extension/devmemory-ai-vscode-0.1.0.vsix`.
 2. In VS Code: `Extensions` view → `…` menu → **Install from VSIX…** → pick the `.vsix`.
 3. Reload VS Code if prompted. A **DevMemory AI** icon appears in the Activity Bar.
 

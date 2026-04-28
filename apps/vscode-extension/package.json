@@ -111,7 +111,7 @@
     "clean": "tsc -b --clean",
     "bundle": "esbuild src/extension.ts --bundle --platform=node --target=node18 --format=cjs --external:vscode --outfile=dist/extension.js",
     "vscode:prepublish": "npm run build && npm run bundle",
-    "package": "vsce package --no-dependencies"
+    "package": "node ../../scripts/package-vsix.mjs"
   },
   "devDependencies": {
     "@devmemory/core": "file:../../packages/core",
