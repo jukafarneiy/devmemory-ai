@@ -4,6 +4,7 @@ out/
 coverage/
 *.tsbuildinfo
 *.vsix
+.vscode-test/
 .DS_Store
 .env
 .env.*

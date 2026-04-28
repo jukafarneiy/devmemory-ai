@@ -111,12 +111,17 @@
     "clean": "tsc -b --clean",
     "bundle": "esbuild src/extension.ts --bundle --platform=node --target=node18 --format=cjs --external:vscode --outfile=dist/extension.js",
     "vscode:prepublish": "npm run build && npm run bundle",
-    "package": "node ../../scripts/package-vsix.mjs"
+    "package": "node ../../scripts/package-vsix.mjs",
+    "pretest:extension": "npm run build",
+    "test:extension": "node ./dist/test/runTest.js"
   },
   "devDependencies": {
     "@devmemory/core": "file:../../packages/core",
+    "@types/mocha": "^10.0.10",
     "@types/vscode": "^1.90.0",
+    "@vscode/test-electron": "^2.5.2",
     "@vscode/vsce": "^3.2.1",
-    "esbuild": "^0.24.0"
+    "esbuild": "^0.24.0",
+    "mocha": "^10.8.2"
   }
 }

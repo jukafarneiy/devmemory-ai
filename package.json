@@ -18,7 +18,8 @@
     "test": "vitest run",
     "prepackage:vscode": "npm run build && npm run test",
     "package:vscode": "npm run package -w apps/vscode-extension && npm run verify:vscode-package",
-    "verify:vscode-package": "node scripts/verify-vsix.mjs"
+    "verify:vscode-package": "node scripts/verify-vsix.mjs",
+    "test:vscode-extension": "npm run test:extension -w apps/vscode-extension"
   },
   "devDependencies": {
     "@types/node": "^20.12.12",

@@ -38,6 +38,21 @@ npm run package:vscode
 
 The output is `apps/vscode-extension/devmemory-ai-vscode-0.1.0.vsix`. Install with `code --install-extension <path>` or via VS Code's *Install from VSIX…* action. Nothing is published to the Marketplace.
 
+## Extension smoke tests
+
+```bash
+npm run test:vscode-extension
+```
+
+Spawns a headless VS Code via `@vscode/test-electron`, opens a throwaway temp workspace with `README.md`, `package.json`, `src/index.ts`, and a fake `.env`, then runs Mocha smoke tests inside the extension host. The suite asserts:
+
+- the extension activates without error,
+- all expected commands (`devmemory.initializeProject`, `…generateBootstrapPrompt`, `…applyBootstrapMemory`, `…generateResumePrompt`, `…generateSessionEndPrompt`, `…applySessionUpdate`, `…runHealthCheck`) are registered,
+- `devmemory.initializeProject` creates `.ai-memory/manifest.json` and `.ai-memory/scan-report.md` in the temp workspace, and the fake `.env` is **not** tracked,
+- `devmemory.generateResumePrompt` writes `.ai-memory/prompts/resume-prompt.md`.
+
+The first run downloads VS Code (~200 MB) into `apps/vscode-extension/.vscode-test/` and is cached for subsequent runs. The test workspace is created and removed under the OS temp dir, so the repo stays clean. Test files compile to `dist/test/` and are excluded from the VSIX.
+
 ## Sidebar (Guided UX)
 
 The extension contributes a **DevMemory AI** view container in the Activity Bar. Open it and you'll see a guided flow rather than a bare list of commands.
