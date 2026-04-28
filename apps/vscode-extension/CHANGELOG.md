@@ -1,8 +1,14 @@
 # Changelog
 
+## 0.1.1 — Marketplace Preview copy update (2026-04-28)
+
+- Published as a Visual Studio Marketplace Preview extension under the `devmemory-ai` publisher.
+- Updated README and license language from closed-beta / pre-Marketplace wording to public-preview wording.
+- Added the Marketplace sidebar screenshot to the extension README.
+
 ## 0.1.0 — First beta (2026-04-28)
 
-First installable beta of the DevMemory AI VS Code extension. Distributed as a `.vsix`; not on the Marketplace yet.
+First installable beta of the DevMemory AI VS Code extension. Initially distributed as a verified `.vsix`.
 
 ### Positioning
 

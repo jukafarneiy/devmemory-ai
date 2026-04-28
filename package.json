@@ -1,8 +1,8 @@
 {
   "name": "devmemory-ai",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
-  "description": "Local-first persistent memory for AI-assisted software projects.",
+  "description": "Local, auditable project memory for AI coding sessions in security-conscious engineering teams.",
   "license": "SEE LICENSE IN LICENSE.md",
   "repository": {
     "type": "git",

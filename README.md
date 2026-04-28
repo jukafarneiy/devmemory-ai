@@ -4,7 +4,7 @@
 
 DevMemory AI is a VS Code extension and a Markdown-based memory store that lives entirely inside your workspace. It produces and audits the *structured context* you feed into any AI assistant — Claude, Codex, Cursor, Copilot, on-prem LLMs — without ever calling them itself. Built for fintech, healthtech, govtech, defense, and consultancy teams whose AppSec or CISO requires local-first tooling and a clear audit trail of what AI sees and produces.
 
-> **Beta.** Distributed as a `.vsix`, not on the Marketplace yet. Closed beta license — see `LICENSE.md`.
+> **Marketplace Preview.** Install the VS Code extension from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=devmemory-ai.devmemory-ai-vscode). Public preview beta license — see `LICENSE.md`.
 
 This monorepo contains:
 
@@ -67,7 +67,7 @@ Open the **DevMemory AI** view in the Activity Bar. The sidebar always shows the
 - **Single machine.** No sync between devs or between your laptop and desktop.
 - **Clipboard-driven.** No automatic AI API integration.
 - **No team features.** No shared dashboard, no roles, no organization view.
-- **Beta license.** Closed beta — see `LICENSE.md`. Not on the Marketplace yet.
+- **Preview beta license.** See `LICENSE.md`.
 - **No compliance certifications** (SOC 2, ISO 27001) — DevMemory's local-only design makes most of them not applicable, but no formal attestation exists today.
 
 ## Roadmap
@@ -76,7 +76,7 @@ Open the **DevMemory AI** view in the Activity Bar. The sidebar always shows the
 - E2E-encrypted memory sync between machines for the same user.
 - Exportable audit log (CSV / PDF) of files read and AI replies validated.
 - JetBrains port of the same workflow.
-- Public Marketplace listing once the closed beta concludes.
+- Additional Marketplace screenshots and a short onboarding demo GIF.
 
 **Not yet available — do not assume present:**
 - Team workspaces / shared memory.
@@ -115,7 +115,7 @@ npm run package:vscode
    - the packaged `package.json` has no runtime `@devmemory/core` dependency, no `file:../../` workspace links, and includes `icon`, `license`, `repository`, while having no `activationEvents`;
    - the VSIX is under 500 KB.
 
-The output is `apps/vscode-extension/devmemory-ai-vscode-0.1.0.vsix`. Install with `code --install-extension <path>` or via VS Code's *Install from VSIX…* action. Nothing is published to the Marketplace.
+The output is `apps/vscode-extension/devmemory-ai-vscode-0.1.1.vsix`. Install with `code --install-extension <path>` or via VS Code's *Install from VSIX…* action. The public Marketplace listing is at <https://marketplace.visualstudio.com/items?itemName=devmemory-ai.devmemory-ai-vscode>.
 
 ### Extension smoke tests
 

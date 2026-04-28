@@ -1,6 +1,6 @@
 # DevMemory AI — Positioning & Market Validation (v0.1)
 
-> Status: **closed beta**, no paying customers, no Marketplace listing yet. This doc records the current position the project is taking — not aspirational claims.
+> Status: **Marketplace Preview**, no paying customers yet. This doc records the current position the project is taking — not aspirational claims.
 
 ## One-line positioning
 
@@ -65,10 +65,10 @@ If a team already maintains a hand-written `CLAUDE.md` or `.cursorrules` and is 
 
 ## Validation status
 
-- **Build / tests:** 98 unit tests in core, 4 smoke tests in the extension host, build green on macOS.
-- **Distribution:** `.vsix` builds and verifies. **No Marketplace listing yet.**
-- **Users:** none confirmed outside the maintainers. Closed beta.
-- **Buyer interviews:** **not conducted.** This positioning is a hypothesis derived from the audit (`/Users/farneiygomesjr/.claude/plans/realize-uma-nica-auditoria-expressive-ladybug.md`), not from primary research. Validation steps below are required before claiming product-market fit.
+- **Build / tests:** 116 unit tests in core, 4 smoke tests in the extension host, build green on macOS.
+- **Distribution:** Public Visual Studio Marketplace Preview listing plus verified `.vsix` builds.
+- **Users:** no adoption data yet beyond the maintainers and first public listing.
+- **Buyer interviews:** **not conducted.** This positioning is a hypothesis derived from internal product audit, not from primary research. Validation steps below are required before claiming product-market fit.
 
 ## Validation plan (next, not yet run)
 

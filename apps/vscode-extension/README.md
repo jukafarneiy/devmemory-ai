@@ -4,7 +4,7 @@
 
 DevMemory AI is a VS Code extension and a Markdown-based memory store that lives entirely inside your workspace. It makes the context you give an AI assistant — and the responses you bring back — written, reviewable, and portable across tools. Built for fintech, healthtech, govtech, defense, and consultancy teams whose AppSec or CISO requires local-first tooling and a clear audit trail of what AI sees and produces.
 
-> **Beta.** Distributed as a `.vsix`, not on the Marketplace yet. Closed beta license — see `LICENSE.md`.
+> **Marketplace Preview.** Install from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=devmemory-ai.devmemory-ai-vscode). Public preview beta license — see `LICENSE.md`.
 
 ---
 
@@ -19,17 +19,21 @@ DevMemory AI scans your workspace (with strict, security-aware exclusions), prod
 
 ## Install the beta
 
+Install from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=devmemory-ai.devmemory-ai-vscode), then reload VS Code if prompted.
+
+For local testing or manual install, build the verified `.vsix`:
+
 ```bash
 npm install
 npm run package:vscode
 ```
 
-`npm run package:vscode` runs build + tests, packages the extension with esbuild bundling, strips devDependencies from the shipped `package.json`, and verifies the resulting VSIX. Output: `apps/vscode-extension/devmemory-ai-vscode-0.1.0.vsix`.
+`npm run package:vscode` runs build + tests, packages the extension with esbuild bundling, strips devDependencies from the shipped `package.json`, and verifies the resulting VSIX. Output: `apps/vscode-extension/devmemory-ai-vscode-0.1.1.vsix`.
 
 Install in VS Code: `Extensions` view → `…` menu → **Install from VSIX…** → pick the `.vsix`. Or from the CLI:
 
 ```bash
-code --install-extension apps/vscode-extension/devmemory-ai-vscode-0.1.0.vsix
+code --install-extension apps/vscode-extension/devmemory-ai-vscode-0.1.1.vsix
 ```
 
 A **DevMemory AI** icon appears in the Activity Bar.
@@ -95,7 +99,7 @@ DevMemory and the native files coexist. Run **DevMemory AI: Export AI Context Fi
 - **Single machine.** No sync between devs or between your laptop and desktop.
 - **Clipboard-driven.** No automatic AI API integration. Each session is *copy-paste-into-AI, copy-paste-back*.
 - **No team features.** No shared dashboard, no roles, no organization view.
-- **Beta license.** Closed beta — see `LICENSE.md`. Not yet on the VS Code Marketplace.
+- **Preview beta license.** See `LICENSE.md`.
 - **No compliance certifications** (SOC 2, ISO 27001, etc.) — DevMemory's local-only design makes most of them not applicable, but no formal attestation exists today.
 
 ## Roadmap
@@ -104,7 +108,7 @@ DevMemory and the native files coexist. Run **DevMemory AI: Export AI Context Fi
 - E2E-encrypted memory sync between machines for the same user.
 - Exportable audit log (CSV / PDF) of files read and AI replies validated.
 - JetBrains port of the same workflow.
-- Public Marketplace listing once the closed beta concludes.
+- Additional Marketplace screenshots and a short onboarding demo GIF.
 
 **Not yet available — do not assume present:**
 - Team workspaces / shared memory.

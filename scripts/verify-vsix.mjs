@@ -3,7 +3,11 @@ import { existsSync, readFileSync, statSync } from "node:fs";
 import { resolve } from "node:path";
 import yauzl from "yauzl";
 
-const VSIX_PATH = resolve("apps/vscode-extension/devmemory-ai-vscode-0.1.0.vsix");
+const EXTENSION_PACKAGE_PATH = resolve("apps/vscode-extension/package.json");
+const extensionPackage = JSON.parse(readFileSync(EXTENSION_PACKAGE_PATH, "utf8"));
+const VSIX_PATH = resolve(
+  `apps/vscode-extension/${extensionPackage.name}-${extensionPackage.version}.vsix`
+);
 
 const REQUIRED_FILES = [
   "extension/package.json",

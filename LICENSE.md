@@ -2,7 +2,7 @@
 
 Copyright (c) 2026 DevMemory AI. All rights reserved.
 
-This software is distributed as a **closed beta**. It is provided to authorized testers and contributors for the limited purpose of evaluating and helping improve the DevMemory AI extension and its supporting packages.
+This software is distributed as a **public preview beta**. It is provided for the limited purpose of evaluating and helping improve the DevMemory AI extension and its supporting packages.
 
 ## You may
 
@@ -31,6 +31,6 @@ The software is provided **"as is"**, without warranty of any kind, express or i
 
 ## Future licensing
 
-This beta license may be replaced with a formal open-source or commercial license before any public release. Until that happens, the terms above apply.
+This beta license may be replaced with a formal open-source or commercial license before any future stable or commercial release. Until that happens, the terms above apply.
 
 For permissions beyond the scope of this license, contact the project maintainer.
