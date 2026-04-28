@@ -156,11 +156,11 @@ Replace `<owner>` with the actual GitHub owner before pasting.
 ![DevMemory AI: local, auditable project memory for AI coding sessions](https://raw.githubusercontent.com/<owner>/devmemory-ai/main/apps/vscode-extension/media/marketplace/01-hero.png)
 ```
 
-## Out-of-scope items flagged for follow-up (no action taken in this pass)
+## Marketplace follow-up status
 
-- **`LICENSE.md` redistribution clause** still forbids third-party distribution; the Marketplace cannot host the binary as written. Adding a Marketplace carve-out paragraph (or switching to a permissive license for the beta) is a deliberate legal change for the maintainer to make. Out of scope here per the brief.
+- **`LICENSE.md` Marketplace carve-out — addressed.** Both `LICENSE.md` and `apps/vscode-extension/LICENSE.md` now include a "Distribution via the Visual Studio Marketplace" section that grants Microsoft a limited, revocable license to host and distribute the `.vsix`. The closed-beta restrictions on third-party redistribution remain intact for every other channel.
 - **`"private": true`** in `apps/vscode-extension/package.json` remains intentionally on so `vsce publish` cannot fire by accident.
-- **Repository URL** (`github.com/jukafarneiy/devmemory-ai`) presence/visibility is not verified from this environment.
+- **Repository URL — addressed.** `github.com/jukafarneiy/devmemory-ai` is public and matches `apps/vscode-extension/package.json`.
 - **`PRIVACY.md`** matches the current README and `package.json` description; no changes required for marketplace readiness.
 
 Once the assets above are captured and the legal items are resolved, this doc can be deleted or replaced with a "How we capture marketing assets" runbook.

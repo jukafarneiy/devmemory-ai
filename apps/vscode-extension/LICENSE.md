@@ -17,6 +17,14 @@ This software is distributed as a **closed beta**. It is provided to authorized 
 - Use the software in a commercial product or production environment.
 - Remove or alter copyright, license, or attribution notices.
 
+## Distribution via the Visual Studio Marketplace
+
+As a limited exception to the redistribution prohibition above, the copyright holder grants Microsoft Corporation, the operator of the Visual Studio Marketplace, a non-exclusive, worldwide, royalty-free, revocable license to host and distribute the binary form of this extension (the `.vsix` package) together with its accompanying README, CHANGELOG, and icon, solely through the Visual Studio Marketplace and the in-product Extensions view of Visual Studio Code and Visual Studio.
+
+End users who obtain the extension through the Visual Studio Marketplace remain bound by all other terms of this license. This exception applies only to the official Microsoft-operated Marketplace and does not authorize any third party to host, mirror, repackage, or redistribute the extension through any other channel, app store, or registry.
+
+This exception is revocable: the copyright holder may withdraw the extension from the Marketplace at any time. Revocation does not affect copies already obtained by end users prior to revocation, who remain bound by this license.
+
 ## No warranty
 
 The software is provided **"as is"**, without warranty of any kind, express or implied, including but not limited to merchantability, fitness for a particular purpose, and non-infringement. The authors are not liable for any claim, damages, or other liability arising from use of the software.
