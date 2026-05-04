@@ -1,14 +1,13 @@
 {
   "name": "devmemory-ai-vscode",
   "displayName": "DevMemory AI",
-  "description": "Local, auditable project memory for AI coding sessions. Workspace-only Markdown, no telemetry, no network calls — built for security-conscious engineering teams.",
-  "version": "0.1.2",
-  "preview": true,
+  "description": "Stop your AI from forgetting your codebase — and from suggesting `rm -rf`. Local memory and a destructive-paste guard for Claude, Copilot, Cursor, Cline, Continue, and on-prem LLMs. Includes @devmemory chat participant and MCP server.",
+  "version": "0.3.0",
   "publisher": "devmemory-ai",
   "engines": {
-    "vscode": "^1.90.0"
+    "vscode": "^1.97.0"
   },
-  "categories": ["AI", "Other"],
+  "categories": ["AI", "Programming Languages", "Other"],
   "bugs": {
     "url": "https://github.com/jukafarneiy/devmemory-ai/issues"
   },
@@ -16,19 +15,28 @@
     "ai",
     "memory",
     "context",
-    "local-first",
-    "audit",
-    "compliance",
-    "security",
-    "governance",
     "claude",
+    "claude-code",
     "claude-md",
-    "copilot",
+    "agents-md",
     "cursor",
-    "session",
-    "markdown"
+    "cursorrules",
+    "copilot",
+    "cline",
+    "continue",
+    "mcp",
+    "audit",
+    "paste-guard",
+    "ai-safety",
+    "local-first",
+    "session"
   ],
   "icon": "media/icon.png",
+  "galleryBanner": {
+    "color": "#0B1220",
+    "theme": "dark"
+  },
+  "qna": "marketplace",
   "license": "SEE LICENSE IN LICENSE.md",
   "repository": {
     "type": "git",
@@ -40,19 +48,19 @@
     "commands": [
       {
         "command": "devmemory.initializeProject",
-        "title": "DevMemory AI: Set Up Memory"
+        "title": "DevMemory AI: Scan This Project"
       },
       {
         "command": "devmemory.generateResumePrompt",
-        "title": "DevMemory AI: Start AI Session"
+        "title": "DevMemory AI: Resume AI Session"
       },
       {
         "command": "devmemory.addSessionSummary",
-        "title": "DevMemory AI: Add Session Summary"
+        "title": "DevMemory AI: Add Manual Session Note"
       },
       {
         "command": "devmemory.openMemoryFolder",
-        "title": "DevMemory AI: Open Memory Files"
+        "title": "DevMemory AI: Open Memory Folder"
       },
       {
         "command": "devmemory.openScanReport",
@@ -60,19 +68,19 @@
       },
       {
         "command": "devmemory.generateBootstrapPrompt",
-        "title": "DevMemory AI: Teach DevMemory About This Project"
+        "title": "DevMemory AI: Teach The AI About This Project"
       },
       {
         "command": "devmemory.applyBootstrapMemory",
-        "title": "DevMemory AI: Save Project Understanding"
+        "title": "DevMemory AI: Save What The AI Told Me"
       },
       {
         "command": "devmemory.generateSessionEndPrompt",
-        "title": "DevMemory AI: End AI Session"
+        "title": "DevMemory AI: Wrap Up Session"
       },
       {
         "command": "devmemory.applySessionUpdate",
-        "title": "DevMemory AI: Save Session Summary"
+        "title": "DevMemory AI: Save What The AI Did"
       },
       {
         "command": "devmemory.refreshView",
@@ -81,7 +89,7 @@
       },
       {
         "command": "devmemory.runHealthCheck",
-        "title": "DevMemory AI: Check Memory Quality"
+        "title": "DevMemory AI: Check Memory Health"
       },
       {
         "command": "devmemory.quarantineFlaggedSessions",
@@ -89,7 +97,43 @@
       },
       {
         "command": "devmemory.exportAIContextFiles",
-        "title": "DevMemory AI: Export AI Context Files"
+        "title": "DevMemory AI: Export Context To CLAUDE.md / AGENTS.md / Copilot / Cursor"
+      },
+      {
+        "command": "devmemory.disablePasteGuard",
+        "title": "DevMemory AI: Disable Paste Guard (Workspace)"
+      },
+      {
+        "command": "devmemory.viewPasteGuardLog",
+        "title": "DevMemory AI: View Paste Guard Log"
+      },
+      {
+        "command": "devmemory.viewTelemetry",
+        "title": "DevMemory AI: View Local Telemetry"
+      },
+      {
+        "command": "devmemory.exportTelemetry",
+        "title": "DevMemory AI: Export Local Telemetry (CSV)"
+      },
+      {
+        "command": "devmemory.clearTelemetry",
+        "title": "DevMemory AI: Clear Local Telemetry"
+      },
+      {
+        "command": "devmemory.exportAuditPack",
+        "title": "DevMemory AI: Export Audit Pack"
+      },
+      {
+        "command": "devmemory.verifyAuditPack",
+        "title": "DevMemory AI: Verify Audit Pack"
+      },
+      {
+        "command": "devmemory.openWalkthrough",
+        "title": "DevMemory AI: Open Welcome Walkthrough"
+      },
+      {
+        "command": "devmemory.enableMcp",
+        "title": "DevMemory AI: Enable MCP Server"
       }
     ],
     "viewsContainers": {
@@ -97,15 +141,20 @@
         {
           "id": "devmemory",
           "title": "DevMemory AI",
-          "icon": "media/devmemory.svg"
+          "icon": "media/devmemory-ai-activity-bar.svg"
         }
       ]
     },
     "views": {
       "devmemory": [
         {
-          "id": "devmemory.memoryView",
-          "name": "Project Memory"
+          "id": "devmemory.heroView",
+          "name": "Status",
+          "type": "webview"
+        },
+        {
+          "id": "devmemory.actionsView",
+          "name": "Actions"
         }
       ]
     },
@@ -113,8 +162,14 @@
       "view/title": [
         {
           "command": "devmemory.refreshView",
-          "when": "view == devmemory.memoryView",
+          "when": "view == devmemory.actionsView",
           "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "devmemory.refreshView",
+          "when": "false"
         }
       ]
     },
@@ -125,14 +180,177 @@
           "type": "boolean",
           "default": true,
           "description": "Ask for explicit confirmation before scanning allowed workspace files."
+        },
+        "devmemory.pasteGuard.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Inspect large pastes for destructive commands (rm -rf, drop database, fork bomb, …) and block before they hit your code."
+        },
+        "devmemory.pasteGuard.minChars": {
+          "type": "number",
+          "default": 200,
+          "minimum": 50,
+          "maximum": 5000,
+          "description": "Minimum number of characters in a single insertion before the paste guard inspects it."
+        },
+        "devmemory.pasteGuard.allowedFileGlobs": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [
+            "**/*.test.ts",
+            "**/*.test.tsx",
+            "**/*.test.js",
+            "**/*.spec.ts",
+            "**/*.md",
+            "**/.ai-memory/**"
+          ],
+          "description": "Globs (relative to the workspace root) where the paste guard never runs (typically tests and docs)."
+        },
+        "devmemory.telemetry.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Append local-only event lines to .ai-memory/telemetry/. Never sent over the network. Inspect with \"View Local Telemetry\" or clear with \"Clear Local Telemetry\"."
+        },
+        "devmemory.registerChatParticipant": {
+          "type": "boolean",
+          "default": true,
+          "description": "Register @devmemory in Copilot Chat / VS Code Chat so any chat agent can reach memory without clipboard."
+        },
+        "devmemory.exposeMcpServer": {
+          "type": "boolean",
+          "default": false,
+          "description": "Run a local MCP (Model Context Protocol) server that exposes .ai-memory/ to Claude Code, Cursor, Cline, Continue, and any MCP-aware client. Auto-writes .vscode/mcp.json."
+        },
+        "devmemory.autoAttachContext": {
+          "type": "boolean",
+          "default": true,
+          "description": "When the VS Code Chat / Copilot Chat opens, surface a one-click action to inject the current resume prompt as context."
         }
       }
-    }
+    },
+    "chatParticipants": [
+      {
+        "id": "devmemory.assistant",
+        "name": "devmemory",
+        "fullName": "DevMemory",
+        "description": "Local project memory for any chat agent. No telemetry. No network calls.",
+        "isSticky": true,
+        "commands": [
+          { "name": "resume", "description": "Inject a fresh resume prompt with current project memory" },
+          { "name": "decisions", "description": "Show decisions logged in this project" },
+          { "name": "architecture", "description": "Show the local architecture summary" },
+          { "name": "save-session", "description": "Append a session draft from the current chat" }
+        ]
+      }
+    ],
+    "languageModelTools": [
+      {
+        "name": "devmemory_getProjectSummary",
+        "displayName": "DevMemory · Project Summary",
+        "modelDescription": "Returns the local DevMemory project-summary.md content for this workspace. Read-only. Use before answering questions about the project's purpose, tech stack, or scope.",
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "devmemoryProjectSummary",
+        "icon": "$(book)",
+        "tags": ["memory", "context"],
+        "inputSchema": { "type": "object", "properties": {} }
+      },
+      {
+        "name": "devmemory_getArchitecture",
+        "displayName": "DevMemory · Architecture",
+        "modelDescription": "Returns the local DevMemory architecture.md content for this workspace. Read-only. Use before discussing modules, boundaries, or data flow.",
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "devmemoryArchitecture",
+        "icon": "$(symbol-namespace)",
+        "tags": ["memory", "context"],
+        "inputSchema": { "type": "object", "properties": {} }
+      },
+      {
+        "name": "devmemory_getCurrentState",
+        "displayName": "DevMemory · Current State",
+        "modelDescription": "Returns DevMemory current-state.md content. Read-only. Use to know what is working, in progress, or known-broken before suggesting changes.",
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "devmemoryCurrentState",
+        "icon": "$(pulse)",
+        "tags": ["memory", "context"],
+        "inputSchema": { "type": "object", "properties": {} }
+      },
+      {
+        "name": "devmemory_searchDecisions",
+        "displayName": "DevMemory · Search Decisions",
+        "modelDescription": "Searches the local DevMemory decisions/decisions.md log for entries matching a keyword. Read-only. Use when you need to recall a past architectural choice.",
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "devmemoryDecisions",
+        "icon": "$(history)",
+        "tags": ["memory"],
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "query": { "type": "string", "description": "Substring (case-insensitive) to search for in the decisions log." }
+          },
+          "required": ["query"]
+        }
+      },
+      {
+        "name": "devmemory_auditAiResponse",
+        "displayName": "DevMemory · Audit AI Response",
+        "modelDescription": "Validates an AI-produced text for destructive shell commands (rm -rf, DROP DATABASE, fork bombs, etc.) and simulated/fictitious content. Returns warnings before the user runs anything. Use this on any AI proposal that includes shell commands or claims about files.",
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "devmemoryAudit",
+        "icon": "$(shield)",
+        "tags": ["safety", "validation"],
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "text": { "type": "string", "description": "The AI-generated text to inspect." }
+          },
+          "required": ["text"]
+        }
+      }
+    ],
+    "walkthroughs": [
+      {
+        "id": "devmemory.welcome",
+        "title": "Get started with DevMemory AI",
+        "description": "Stop your AI from forgetting your codebase. Block destructive commands before you paste them. 4 quick steps.",
+        "steps": [
+          {
+            "id": "scan",
+            "title": "Scan this project (15 sec)",
+            "description": "DevMemory builds a local Markdown summary of your repo with strict secret exclusions (~140 patterns). Nothing leaves your machine.\n[Scan this project](command:devmemory.initializeProject)",
+            "media": { "markdown": "media/walkthroughs/01-scan.md" },
+            "completionEvents": ["onCommand:devmemory.initializeProject"]
+          },
+          {
+            "id": "paste-guard",
+            "title": "See the paste guard catch a destructive command",
+            "description": "Open any file and paste an AI suggestion that contains `rm -rf`, `git push --force`, or `DROP DATABASE`. DevMemory blocks the paste modally with one-click Undo.\n[Open the paste guard log](command:devmemory.viewPasteGuardLog)",
+            "media": { "markdown": "media/walkthroughs/02-paste-guard.md" },
+            "completionEvents": ["onView:devmemory.heroView"]
+          },
+          {
+            "id": "resume",
+            "title": "Resume an AI session in 1 click",
+            "description": "DevMemory builds a fresh resume prompt with the current project memory. Use the @devmemory chat participant inside Copilot Chat, or copy-paste into Claude Code / Cursor / Cline / Continue.\n[Resume an AI session](command:devmemory.generateResumePrompt)",
+            "media": { "markdown": "media/walkthroughs/03-resume.md" },
+            "completionEvents": ["onCommand:devmemory.generateResumePrompt"]
+          },
+          {
+            "id": "export",
+            "title": "Connect Claude Code, Cursor, Cline, or Continue",
+            "description": "DevMemory writes a managed block into CLAUDE.md, AGENTS.md, .cursorrules, and .github/copilot-instructions.md so other AI tools auto-read your memory. Anything outside the markers is preserved.\n[Export AI context files](command:devmemory.exportAIContextFiles)",
+            "media": { "markdown": "media/walkthroughs/04-export.md" },
+            "completionEvents": ["onCommand:devmemory.exportAIContextFiles"]
+          }
+        ]
+      }
+    ]
   },
   "scripts": {
     "build": "tsc -b",
     "clean": "tsc -b --clean",
-    "bundle": "esbuild src/extension.ts --bundle --platform=node --target=node18 --format=cjs --external:vscode --outfile=dist/extension.js",
+    "bundle:extension": "esbuild src/extension.ts --bundle --platform=node --target=node18 --format=cjs --external:vscode --outfile=dist/extension.js",
+    "bundle:mcp": "esbuild src/mcp/server.ts --bundle --platform=node --target=node18 --format=cjs --outfile=dist/mcp-server.js",
+    "bundle": "npm run bundle:extension && npm run bundle:mcp",
     "vscode:prepublish": "npm run build && npm run bundle",
     "package": "node ../../scripts/package-vsix.mjs",
     "pretest:extension": "npm run build",
@@ -141,7 +359,7 @@
   "devDependencies": {
     "@devmemory/core": "file:../../packages/core",
     "@types/mocha": "^10.0.10",
-    "@types/vscode": "^1.90.0",
+    "@types/vscode": "^1.97.0",
     "@vscode/test-electron": "^2.5.2",
     "@vscode/vsce": "^3.2.1",
     "esbuild": "^0.24.0",

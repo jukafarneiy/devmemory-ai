@@ -1,7 +1,5 @@
 export type MemoryMode = "local";
 
-export type LlmProvider = "manual" | "openai" | "anthropic" | "custom";
-
 export interface MemoryConfig {
   version: number;
   memoryDir: string;
@@ -10,7 +8,6 @@ export interface MemoryConfig {
   exclude: string[];
   maxFileBytes: number;
   auditFileReads: boolean;
-  llmProvider: LlmProvider;
 }
 
 export interface FileRecord {

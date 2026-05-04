@@ -36,6 +36,47 @@ export type {
   SessionUpdatePreview,
   SessionUpdatePreviewSection
 } from "./memory";
+export {
+  GENERIC_CURRENT_STATE_PHRASES,
+  NONE_LINE_PATTERN,
+  PASTE_DESTRUCTIVE_PATTERNS,
+  SESSION_DESTRUCTIVE_PATTERNS,
+  SIMULATION_PATTERN,
+  detectDestructiveCommands,
+  detectSimulatedContent,
+  highestSeverity,
+  validateAiResponse
+} from "./validators";
+export type {
+  DestructivePattern,
+  RiskFinding,
+  RiskSeverity,
+  ValidateAiResponseOptions
+} from "./validators";
+export {
+  TelemetryDisabledError,
+  clearTelemetry,
+  exportTelemetryAsCsv,
+  readTelemetry,
+  recordEvent,
+  resolveTelemetryDir
+} from "./telemetry";
+export type { RecordEventOptions, TelemetryEvent } from "./telemetry";
+export {
+  VERIFY_SH_TEMPLATE,
+  appendAuditEntry,
+  ensureAuditKeypair,
+  readAuditEntries,
+  resolveAuditDir,
+  verifyAuditLog
+} from "./auditPack";
+export type {
+  AppendAuditEntryInput,
+  AuditEntry,
+  AuditEntryKind,
+  AuditKeyMaterial,
+  VerifyOutcome
+} from "./auditPack";
 export { scanProject } from "./scanner";
 export {
   LEGACY_PLACEHOLDER_MARKERS,

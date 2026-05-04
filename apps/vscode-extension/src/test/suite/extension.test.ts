@@ -13,7 +13,16 @@ const EXPECTED_COMMANDS = [
   "devmemory.generateSessionEndPrompt",
   "devmemory.applySessionUpdate",
   "devmemory.runHealthCheck",
-  "devmemory.exportAIContextFiles"
+  "devmemory.exportAIContextFiles",
+  "devmemory.disablePasteGuard",
+  "devmemory.viewPasteGuardLog",
+  "devmemory.viewTelemetry",
+  "devmemory.exportTelemetry",
+  "devmemory.clearTelemetry",
+  "devmemory.exportAuditPack",
+  "devmemory.verifyAuditPack",
+  "devmemory.openWalkthrough",
+  "devmemory.enableMcp"
 ];
 
 function workspaceFolder(): string {
@@ -93,16 +102,16 @@ suite("DevMemory AI extension smoke", () => {
       "scan-report.md should not list .env as a tracked file"
     );
 
-    const initMessage = capturedInfoMessages.find((m) => m.startsWith("Memory set up"));
-    assert.ok(initMessage, "expected a 'Memory set up' info message");
+    const initMessage = capturedInfoMessages.find((m) => m.startsWith("Memory ready"));
+    assert.ok(initMessage, "expected a 'Memory ready' info message");
     assert.match(
       initMessage!,
-      /Teach DevMemory About This Project/,
-      "post-init message should point at the Teach DevMemory next step"
+      /teach the AI about this project/i,
+      "post-init message should point at the Teach the AI next step"
     );
   });
 
-  test("generateResumePrompt creates prompts/resume-prompt.md and points at End AI Session", async () => {
+  test("generateResumePrompt creates prompts/resume-prompt.md and points at Wrap up session", async () => {
     const root = workspaceFolder();
     await vscode.commands.executeCommand("devmemory.generateResumePrompt");
     const promptPath = path.join(root, ".ai-memory", "prompts", "resume-prompt.md");
@@ -112,8 +121,8 @@ suite("DevMemory AI extension smoke", () => {
     assert.ok(resumeMessage, "expected a 'Resume prompt copied' info message");
     assert.match(
       resumeMessage!,
-      /End AI Session/,
-      "post-resume message should point at the End AI Session next step"
+      /Wrap up/i,
+      "post-resume message should point at the Wrap up session next step"
     );
   });
 });

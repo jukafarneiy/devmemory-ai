@@ -20,6 +20,13 @@ import {
   sessionEndPromptTemplate,
   sessionSummaryTemplate
 } from "./templates";
+import {
+  GENERIC_CURRENT_STATE_PHRASES,
+  NONE_LINE_PATTERN,
+  SESSION_DESTRUCTIVE_PATTERNS,
+  SIMULATION_PATTERN
+} from "./validators";
+import { appendAuditEntry } from "./auditPack";
 import type {
   HealthCheckEntry,
   InitializeMemoryResult,
@@ -451,6 +458,12 @@ export async function applyBootstrapMemory(
     await writeText(target.filePath(memoryDir), content, filesWritten);
   }
 
+  await appendAuditEntry({
+    rootDir,
+    kind: "bootstrap",
+    summary: `bootstrap memory applied (${filesWritten.length} files)`
+  }).catch(() => {});
+
   return { filesWritten };
 }
 
@@ -583,22 +596,7 @@ export interface SessionUpdatePreview {
   warnings: string[];
 }
 
-const SIMULATION_PATTERN = /\b(?:simula[çc][aã]o|simulation|fake|fict[ií]cio|fictitious)\b/i;
-
-const DANGEROUS_COMMAND_PATTERNS: Array<{ pattern: RegExp; label: string }> = [
-  { pattern: /\brm\s+-rf\b/i, label: "rm -rf" },
-  { pattern: /\bgit\s+reset\s+--hard\b/i, label: "git reset --hard" },
-  { pattern: /\bdrop\s+database\b/i, label: "drop database" }
-];
-
-const NONE_LINE_PATTERN = /^none\.?$/i;
-
-const GENERIC_CURRENT_STATE_PHRASES: RegExp[] = [
-  /^no project changes were made(?: in this session)?\.?$/i,
-  /^no work is currently in progress(?: from this session)?\.?$/i,
-  /^known issues:\s*none\.?$/i,
-  /^no known issues were identified(?: in this session)?\.?$/i
-];
+// Patterns are defined in ./validators (single source of truth, vscode-free).
 
 function stripBulletPrefix(line: string): string {
   return line.replace(/^[\s\-*+•#>]+/, "").trim();
@@ -678,7 +676,7 @@ export async function parseSessionUpdatePreview(
   }
 
   const commandsBody = parsed.get("COMMANDS_RUN") ?? "";
-  for (const danger of DANGEROUS_COMMAND_PATTERNS) {
+  for (const danger of SESSION_DESTRUCTIVE_PATTERNS) {
     if (danger.pattern.test(commandsBody)) {
       warnings.push(`Commands Run lists a destructive command: ${danger.label}.`);
     }
@@ -788,6 +786,15 @@ export async function applySessionUpdate(
     await appendManagedLog(bugsPath, "Bugs and Fixes", now, bugs ?? "");
     filesWritten.push(bugsPath);
   }
+
+  const sessionSummary = sections.get("SESSION_SUMMARY") ?? "session applied";
+  await appendAuditEntry({
+    rootDir,
+    kind: "session",
+    filePath: sessionPath,
+    summary: sessionSummary,
+    now
+  }).catch(() => {});
 
   return { filesWritten };
 }

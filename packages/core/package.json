@@ -11,6 +11,6 @@
   "scripts": {
     "build": "tsc -b",
     "clean": "tsc -b --clean",
-    "test": "vitest run src/**/*.test.ts"
+    "test": "vitest run"
   }
 }

@@ -319,6 +319,149 @@ export const DEFAULT_TECHNOLOGY_PROFILES: TechnologyProfile[] = [
       "*.o",
       "*.obj"
     ]
+  },
+  {
+    id: "nextjs",
+    label: "Next.js",
+    signals: ["next.config.js", "next.config.ts", "next.config.mjs", "next-env.d.ts"],
+    include: [
+      "next.config.*",
+      "next-env.d.ts",
+      "app/**/*",
+      "pages/**/*",
+      "components/**/*",
+      "lib/**/*",
+      "src/**/*",
+      "public/**/*",
+      "middleware.ts",
+      "middleware.js",
+      "tailwind.config.*",
+      "postcss.config.*"
+    ],
+    exclude: [
+      ".next/**",
+      "**/.next/**",
+      ".vercel/**",
+      "**/.vercel/**",
+      "out/**",
+      "**/out/**"
+    ]
+  },
+  {
+    id: "django",
+    label: "Django (Python)",
+    signals: ["manage.py", "wsgi.py", "asgi.py"],
+    include: [
+      "manage.py",
+      "wsgi.py",
+      "asgi.py",
+      "**/settings/*.py",
+      "**/settings.py",
+      "**/urls.py",
+      "**/views.py",
+      "**/models.py",
+      "**/serializers.py",
+      "**/admin.py",
+      "**/forms.py",
+      "**/migrations/**/*.py",
+      "templates/**/*",
+      "static/**/*",
+      "apps/**/*"
+    ],
+    exclude: [
+      "**/staticfiles/**",
+      "**/media/**",
+      "**/__pycache__/**"
+    ]
+  },
+  {
+    id: "fastapi",
+    label: "FastAPI (Python)",
+    signals: ["main.py", "app/main.py", "src/main.py"],
+    include: [
+      "main.py",
+      "**/main.py",
+      "**/routers/**/*.py",
+      "**/schemas/**/*.py",
+      "**/models/**/*.py",
+      "**/services/**/*.py",
+      "**/dependencies.py",
+      "**/database.py",
+      "alembic.ini",
+      "alembic/**/*"
+    ],
+    exclude: ["**/__pycache__/**", "**/.pytest_cache/**", "**/.venv/**"]
+  },
+  {
+    id: "rails",
+    label: "Ruby on Rails",
+    signals: ["config/application.rb", "config/routes.rb", "Gemfile"],
+    include: [
+      "Gemfile",
+      "Gemfile.lock",
+      "config/**/*",
+      "app/**/*",
+      "db/migrate/**/*",
+      "db/seeds.rb",
+      "db/schema.rb",
+      "lib/**/*",
+      "spec/**/*",
+      "test/**/*"
+    ],
+    exclude: [
+      "tmp/**",
+      "log/**",
+      "vendor/bundle/**",
+      "public/assets/**",
+      "public/packs/**",
+      "node_modules/**"
+    ]
+  },
+  {
+    id: "flutter-mobile",
+    label: "Flutter / Mobile App",
+    signals: ["pubspec.yaml", "android/app/build.gradle", "ios/Runner.xcodeproj"],
+    include: [
+      "pubspec.yaml",
+      "lib/**/*.dart",
+      "test/**/*.dart",
+      "android/app/build.gradle",
+      "android/app/src/main/AndroidManifest.xml",
+      "ios/Runner/Info.plist",
+      "assets/**/*"
+    ],
+    exclude: [
+      ".dart_tool/**",
+      "build/**",
+      "android/.gradle/**",
+      "android/build/**",
+      "ios/Pods/**",
+      "ios/build/**",
+      "ios/DerivedData/**"
+    ]
+  },
+  {
+    id: "rust-web",
+    label: "Rust web service",
+    signals: [
+      "src/routes/**/*.rs",
+      "src/handlers/**/*.rs",
+      "src/api/**/*.rs",
+      "src/server.rs"
+    ],
+    include: [
+      "Cargo.toml",
+      "Cargo.lock",
+      "src/**/*.rs",
+      "src/main.rs",
+      "src/lib.rs",
+      "src/routes/**/*.rs",
+      "src/handlers/**/*.rs",
+      "src/api/**/*.rs",
+      "migrations/**/*.sql",
+      "build.rs"
+    ],
+    exclude: ["target/**", "**/target/**"]
   }
 ];
 

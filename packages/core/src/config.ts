@@ -40,8 +40,7 @@ export function normalizeConfig(input: Partial<MemoryConfig>): MemoryConfig {
     include: input.include?.length ? input.include : DEFAULT_CONFIG.include,
     exclude: mergeUnique(DEFAULT_CONFIG.exclude, input.exclude ?? []),
     maxFileBytes: input.maxFileBytes ?? DEFAULT_CONFIG.maxFileBytes,
-    auditFileReads: input.auditFileReads ?? DEFAULT_CONFIG.auditFileReads,
-    llmProvider: input.llmProvider ?? DEFAULT_CONFIG.llmProvider
+    auditFileReads: input.auditFileReads ?? DEFAULT_CONFIG.auditFileReads
   };
 }
 

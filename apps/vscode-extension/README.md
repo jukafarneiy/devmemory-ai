@@ -1,122 +1,130 @@
-# DevMemory AI — VS Code Extension (Beta)
+# DevMemory AI
 
-**Local, auditable project memory for AI coding sessions in security-conscious engineering teams.**
+**Stop your AI from forgetting your codebase. And from suggesting `rm -rf`.**
 
-DevMemory AI is a VS Code extension and a Markdown-based memory store that lives entirely inside your workspace. It makes the context you give an AI assistant — and the responses you bring back — written, reviewable, and portable across tools. Built for fintech, healthtech, govtech, defense, and consultancy teams whose AppSec or CISO requires local-first tooling and a clear audit trail of what AI sees and produces.
+DevMemory is a VS Code extension that gives Claude Code, Copilot, Cursor, Cline, Continue, and on-prem LLMs a persistent, auditable memory of *your* repo — and blocks destructive commands before you paste them in.
 
-> **Marketplace Preview.** Install from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=devmemory-ai.devmemory-ai-vscode). Public preview beta license — see `LICENSE.md`.
+> No telemetry by default. No network calls. Everything is plain Markdown under `.ai-memory/`. Open the file, `git diff` it, delete it. Your machine, your files.
+
+![DevMemory AI sidebar — the hero card derives the next-step button from the current state of your local memory](https://github.com/jukafarneiy/devmemory-ai/raw/main/apps/vscode-extension/media/sidebar-v2.gif)
+
+**Works with:** Claude Code · GitHub Copilot · Cursor · Cline · Continue · Codeium / Windsurf · on-prem LLMs (Llama, Bedrock, Azure OpenAI, …) — anything you can paste a prompt into.
 
 ---
 
-## What it actually does
+## What you actually get today
 
-DevMemory AI scans your workspace (with strict, security-aware exclusions), produces a small set of human-readable Markdown files under `.ai-memory/`, and gives you a short, structured workflow for **starting a session, ending a session, and saving what changed**. The memory it produces is what *you* paste into your AI of choice; DevMemory itself never calls an AI API.
+1. **Auto-generated `CLAUDE.md` / `AGENTS.md` / `.cursorrules` / `copilot-instructions.md`** that *coexist* with your hand-written rules. DevMemory only writes inside its markers; everything you write outside them is preserved on every export.
+2. **Inline paste guard.** When you paste anything an AI gave you with `rm -rf`, `drop database`, `git push --force`, fork bombs, `format C:`, `dd if=/dev/zero of=/dev/sda`, `curl … | sh`, or any of 20+ other destructive shapes, DevMemory blocks it modally before it lands in your editor and offers an Undo. Tests, docs, and `.ai-memory/` are exempt.
+3. **One-click resume prompt.** Click *Start AI Session* in the sidebar; the extension reads your local memory, builds a fresh resume prompt, and copies it to your clipboard. Paste into any chat. No re-explaining the project.
+4. **Session capture, validated.** *End AI Session* copies a structured wrap-up prompt; you paste the AI's reply back, and DevMemory validates the response (`rm -rf`, simulated content, missing files, empty summaries) **before** appending the session log and refreshing your `current-state.md` and `tasks/next-actions.md`.
+5. **Local memory health check.** Audits the `.ai-memory/` store for placeholders, missing files, and sessions saved with warnings. Writes a plain-Markdown report.
+6. **Optional local-only telemetry.** Off by default. When you flip `devmemory.telemetry.enabled` on, DevMemory appends events (durations, command names, paste-guard hits) to `.ai-memory/telemetry/events-YYYYMMDD.jsonl`. Inspect, export, or wipe it with one click. **Never sent over the network.**
 
-- **No network calls. No telemetry. No external APIs.** Verifiable in source: there is no HTTP client and no analytics dependency in the extension or its core.
-- **Workspace-only writes.** Everything DevMemory produces is a file inside your repo (`.ai-memory/`). You can commit it, ignore it, or delete it at any time.
-- **AI-agnostic.** Prompts go through your clipboard. Use Claude, Codex, Cursor's chat, Copilot, an on-prem LLM, or anything else that takes pasted input.
-- **AI-response audit trail.** Saved sessions are validated (simulated content, destructive commands, missing files, empty summaries) and the warnings persist in the session log for later review.
+## Three pains it solves
 
-## Install the beta
+| Pain | Without DevMemory | With DevMemory |
+|---|---|---|
+| The AI forgets your architecture every session | Re-explain the codebase. Hope it doesn't hallucinate. | Click *Start AI Session* → prompt with your real architecture lands on clipboard. |
+| The AI invents files / functions / decisions | Catch it in code review (or not). | Saving the session triggers a validator that flags simulated content and references to missing files. |
+| The AI proposes `rm -rf` or `DROP DATABASE` | Read carefully before pasting. Hope. | DevMemory blocks the paste modally. One click to undo. |
 
-Install from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=devmemory-ai.devmemory-ai-vscode), then reload VS Code if prompted.
+## How DevMemory compares
 
-For local testing or manual install, build the verified `.vsix`:
+DevMemory does **not** replace the native chat in Claude Code, Cursor, or Copilot. It produces and audits the *context* you feed into them — and adds the safety net those tools don't.
+
+| | Copilot | Cursor | Cline / Continue | Cody | **DevMemory** |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Local-only memory | – | – | – | – | ✓ |
+| Inline destructive-paste guard | – | – | – | – | ✓ |
+| Multi-AI portable memory (CLAUDE.md / AGENTS.md / cursorrules / copilot) | – | – | – | – | ✓ |
+| Audit trail of AI replies | – | – | – | – | ✓ (Markdown + signed log) |
+| Telemetry off by default | – | – | – | – | ✓ |
+| Open core (FSL → Apache 2.0) | – | – | partial | – | ✓ |
+
+Already maintaining a hand-written `CLAUDE.md` and you're happy? Keep it. Run *DevMemory: Export AI Context Files* and DevMemory will only manage the block between its markers — your handwritten rules stay untouched.
+
+## Install
+
+[![Install from Visual Studio Marketplace](https://img.shields.io/visual-studio-marketplace/v/devmemory-ai.devmemory-ai-vscode?label=Marketplace&logo=visual-studio-code&color=0E639C)](https://marketplace.visualstudio.com/items?itemName=devmemory-ai.devmemory-ai-vscode)
+
+```
+code --install-extension devmemory-ai.devmemory-ai-vscode
+```
+
+A **DevMemory AI** icon appears in the Activity Bar. Open it and the sidebar always shows your next recommended action.
+
+For local development / building from source:
 
 ```bash
 npm install
 npm run package:vscode
+code --install-extension apps/vscode-extension/devmemory-ai-vscode-0.3.0.vsix --force
 ```
 
-`npm run package:vscode` runs build + tests, packages the extension with esbuild bundling, strips devDependencies from the shipped `package.json`, and verifies the resulting VSIX. Output: `apps/vscode-extension/devmemory-ai-vscode-0.1.2.vsix`.
+## Five-step flow
 
-Install in VS Code: `Extensions` view → `…` menu → **Install from VSIX…** → pick the `.vsix`. Or from the CLI:
+A native walkthrough opens on first install (or anytime via *DevMemory AI: Open Welcome Walkthrough*) so you can do all five steps without leaving the editor:
 
-```bash
-code --install-extension apps/vscode-extension/devmemory-ai-vscode-0.1.2.vsix
-```
+![DevMemory AI welcome walkthrough — 4 steps with rich content right inside VS Code](https://github.com/jukafarneiy/devmemory-ai/raw/main/apps/vscode-extension/media/walkthrough.gif)
 
-A **DevMemory AI** icon appears in the Activity Bar.
+1. **Scan This Project** — scans the workspace (with strict, security-aware exclusions) and creates `.ai-memory/`.
+2. **Teach The AI About This Project** → **Save What The AI Told Me** — bootstraps `project-summary`, `architecture`, `current-state`, and `next-actions` using your AI of choice (clipboard or `@devmemory` chat).
+3. **Resume AI Session** — copies a fresh resume prompt that primes the AI with current memory.
+4. **Wrap Up Session** → **Save What The AI Did** — appends a session log (validated). Updates `current-state.md` and `tasks/next-actions.md`.
+5. **Check Memory Health** — audits the local store and writes `.ai-memory/health-check.md`.
 
-## 5-step flow
+## For security-conscious teams
 
-![DevMemory AI sidebar with the guided next-step flow](https://raw.githubusercontent.com/jukafarneiy/devmemory-ai/main/apps/vscode-extension/media/marketplace/02-sidebar.png)
+DevMemory was originally built for fintech, healthtech, govtech, defense, and consultancies under NDA. The core posture stays the same:
 
-Open the **DevMemory AI** view in the Activity Bar — the sidebar always shows the next recommended action.
+- **No network calls. No telemetry by default.** Verifiable in source — there is no HTTP client and no analytics dependency in the extension.
+- **Workspace-only writes.** All output is inside `.ai-memory/`. Commit it, ignore it, archive it — your call.
+- **~140 default exclude patterns** for secrets, credentials, build artifacts, virtual envs, signing keys, Terraform state, mobile config, IDE caches.
+- **Workspace trust required** before any scan. Confirmation modal before initial setup.
+- **Audit trail in plain Markdown.** Diff it. Review it. No opaque indices.
+- **Optional signed audit pack** (coming in v0.3): one-click export of every session log and every paste-guard event, signed with a project-local ed25519 key.
 
-1. **Set Up Memory** — scans the workspace and creates `.ai-memory/` with a manifest, scan report, and starter files.
-2. **Teach DevMemory About This Project** — copies a stack-aware prompt to your clipboard. Paste it into your AI; copy the AI's reply.
-3. **Save Project Understanding** — pastes the AI's reply back. The extension validates the four required sections and writes them into project memory.
-4. **Start AI Session** — copies a fresh resume prompt that primes the AI with the current memory. (Repeat at the start of every session.)
-5. **End AI Session** → **Save Session Summary** — wraps the session, validates the AI's structured response (sim/destructive-cmd/missing-file/empty checks), and appends a session log under `.ai-memory/sessions/` while refreshing `current-state.md` and `tasks/next-actions.md`.
+See `PRIVACY.md` for the full statement.
 
-A separate **Check Memory Quality** command writes `.ai-memory/health-check.md` so you can periodically audit the local store.
+## Talk to DevMemory from inside chat — `@devmemory`
 
-## Security & local-first
+Type `@devmemory /resume` inside Copilot Chat or any VS Code Chat host and DevMemory injects a fresh resume prompt **directly into the chat**. No clipboard, no context switch.
 
-- **No code leaves your machine via DevMemory.** When you paste a prompt into your AI assistant, the AI's own privacy policy applies — DevMemory has no role in that hop. If you use an on-prem LLM, your AI workflow can stay fully local; if you use an enterprise tenant of Claude / Azure OpenAI / Bedrock, your provider's approved controls and privacy terms apply.
-- **Strict scan excludes.** ~140 patterns covering `.env*`, SSH keys, AWS / GCP / Azure credentials, database dumps, build artifacts, `node_modules`, `.git`, virtual envs, mobile signing keys, Terraform state, Firebase service accounts, and similar. Tested.
-- **Workspace trust required.** Scans refuse to run until VS Code has marked the workspace as trusted.
-- **Confirmation before scan.** `devmemory.confirmBeforeScan` (default `true`) shows a modal before any read-and-scaffold action.
-- **Markdown you can review.** Memory files are plain Markdown. Run `git diff` against them, ask security to review them, archive them — they are just text.
+![DevMemory @devmemory chat participant inside Copilot Chat — subcommands /resume, /decisions, /architecture, /save-session](https://github.com/jukafarneiy/devmemory-ai/raw/main/apps/vscode-extension/media/chat-participant.gif)
 
-See `PRIVACY.md` (shipped in the extension package) for the full statement.
+| Subcommand | What it does |
+|---|---|
+| `/resume` | Streams the current resume prompt into chat. |
+| `/decisions` | Shows your decisions log. |
+| `/architecture` | Shows the architecture summary. |
+| `/save-session <pasted-AI-response>` | Validates the response (destructive commands, simulation, missing files) and saves it. |
 
-## When DevMemory is — and isn't — for you
+DevMemory **does not call a model itself** — the participant only feeds local context. Your AI host stays in charge of which model answers.
 
-**It's a fit if you:**
-- Work in fintech, healthtech, govtech, defense, or any environment where AppSec restricts cloud AI tools or requires data-egress controls.
-- Already use an on-prem LLM, a private Bedrock / Azure OpenAI tenant, or a Llama-style self-hosted model and need a memory layer that doesn't depend on a vendor's "memory" feature.
-- Switch between AI assistants (Claude, Codex, Cursor, Copilot, on-prem) and want one portable, version-controlled memory.
-- Want a written, reviewable trail of what your AI was told, what it claimed to do, and what changed in the project.
-- Prefer Markdown you can `git diff` over opaque binary indexes.
+## Connect any MCP-aware client (Claude Code, Cursor, Cline, Continue)
 
-**It's probably not for you if:**
-- You use Cursor or Claude Code without restriction and their built-in project context is enough.
-- You expect the AI to be invoked automatically — DevMemory is a clipboard-driven workflow, not an agent.
-- You need cross-machine memory sync today (see *Roadmap*).
-- You need a web dashboard or a GUI to edit memory; today everything is files.
+Run **DevMemory AI: Enable MCP Server** and DevMemory writes `.vscode/mcp.json` (managed block — your other entries are preserved). Claude Code / Cursor / Cline / Continue auto-discover four tools:
 
-## How DevMemory compares
+- `memory.read` — read a section (`project-summary`, `architecture`, `current-state`, `next-actions`, `decisions`, `bugs`).
+- `memory.search` — search decisions and bugs logs.
+- `memory.audit` — run the destructive-command validator on any text.
+- `memory.appendSession` — save a session draft from inside the agent.
 
-DevMemory **does not replace** the native context features of Claude Code, Cursor, or Copilot. It produces and audits the *structured context* you can feed into them.
+The server is pure stdio JSON-RPC. **Never opens a network port.** Opt-in via `devmemory.exposeMcpServer`.
 
-| Tool | What it stores | Where memory lives | AI-agnostic? | Audit trail of AI replies |
-|---|---|---|---|---|
-| Anthropic `CLAUDE.md` | Free-form rules / notes | Repo file Claude Code reads automatically | No (Claude Code) | No |
-| `AGENTS.md` (agentic conventions) | Free-form agent guidance | Repo file | Tool-by-tool | No |
-| Cursor `.cursorrules` / Cursor memories | Rules + indexed project context | Repo + Cursor-managed indices | No (Cursor) | No |
-| GitHub Copilot custom instructions | Per-user / per-repo prompt prefix | GitHub-side configuration | No (Copilot) | No |
-| **DevMemory AI** | Project summary, architecture, current state, next actions, decisions log, bugs log, validated session logs | Local `.ai-memory/` (Markdown + JSON), git-versionable | Yes (clipboard) | Yes (validated, with warnings persisted) |
+## What's not here yet
 
-If you already maintain a hand-written `CLAUDE.md` or `.cursorrules` and you're happy, you don't need DevMemory. If you want that context **generated, validated, audited, and portable across AIs**, DevMemory is the layer that does it.
+- **E2E-encrypted memory sync** for teams (server-side; opt-in) — on the v0.5 roadmap.
+- **JetBrains and Neovim ports** — planned, not started.
+- **Cursor as a first-class chat host** — `@devmemory` works in Copilot Chat today; Cursor support depends on Cursor's chat-participant support.
 
-DevMemory and the native files coexist. Run **DevMemory AI: Export AI Context Files** to write a clearly marked block (`<!-- devmemory:managed:start --> … <!-- devmemory:managed:end -->`) into `CLAUDE.md`, `AGENTS.md`, `.github/copilot-instructions.md`, and (optionally) `.cursorrules`. Anything outside the markers is preserved on every export — your hand-written rules stay intact, and the managed block is updated in place when you re-run the command.
+If any of these are blockers, file an issue. We prioritize what real users need.
 
-## Current limitations (be aware)
+## License
 
-- **VS Code only.** No JetBrains, Neovim, or standalone CLI yet.
-- **Single machine.** No sync between devs or between your laptop and desktop.
-- **Clipboard-driven.** No automatic AI API integration. Each session is *copy-paste-into-AI, copy-paste-back*.
-- **No team features.** No shared dashboard, no roles, no organization view.
-- **Preview beta license.** See `LICENSE.md`.
-- **No compliance certifications** (SOC 2, ISO 27001, etc.) — DevMemory's local-only design makes most of them not applicable, but no formal attestation exists today.
+Functional Source License 1.1, with an Apache 2.0 future grant ([FSL-1.1-Apache-2.0](LICENSE.md)). Free for any internal, educational, and non-competing commercial use. Auto-converts to Apache 2.0 on **2028-04-28**.
 
-## Roadmap
+## Reporting issues
 
-**Planned (next):**
-- E2E-encrypted memory sync between machines for the same user.
-- Exportable audit log (CSV / PDF) of files read and AI replies validated.
-- JetBrains port of the same workflow.
-- Additional Marketplace screenshots and a short onboarding demo GIF.
-
-**Not yet available — do not assume present:**
-- Team workspaces / shared memory.
-- Web dashboard.
-- Direct AI API integration (auto-paste into Claude / OpenAI / Bedrock).
-- SOC 2 / ISO certifications.
-- Multi-project view across many repos.
-
-## Reporting feedback during the beta
-
-Open an issue in the project repository. When reporting problems, include the contents of `.ai-memory/health-check.md` — it's the fastest way to understand the state of your memory store.
+[https://github.com/jukafarneiy/devmemory-ai/issues](https://github.com/jukafarneiy/devmemory-ai/issues) — please include `.ai-memory/health-check.md` for any "memory looks weird" reports.

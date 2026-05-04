@@ -28,10 +28,11 @@ writeFileSync(PKG_PATH, `${JSON.stringify(sanitized, null, 2)}\n`, "utf8");
 
 let exitCode = 0;
 try {
-  const result = spawnSync("npx", ["vsce", "package", "--no-dependencies"], {
-    stdio: "inherit",
-    shell: false
-  });
+  const result = spawnSync(
+    "npx",
+    ["vsce", "package", "--no-dependencies", "--no-rewrite-relative-links"],
+    { stdio: "inherit", shell: false }
+  );
   if (result.error) {
     throw result.error;
   }

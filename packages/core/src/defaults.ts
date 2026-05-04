@@ -144,6 +144,5 @@ export const DEFAULT_CONFIG: MemoryConfig = {
   include: DEFAULT_INCLUDE_PATTERNS,
   exclude: DEFAULT_EXCLUDE_PATTERNS,
   maxFileBytes: 200_000,
-  auditFileReads: true,
-  llmProvider: "manual"
+  auditFileReads: true
 };

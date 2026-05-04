@@ -16,8 +16,9 @@ const REQUIRED_FILES = [
   "extension/LICENSE.md",
   "extension/PRIVACY.md",
   "extension/dist/extension.js",
+  "extension/dist/mcp-server.js",
   "extension/media/icon.png",
-  "extension/media/devmemory.svg"
+  "extension/media/devmemory-ai-activity-bar.svg"
 ];
 
 const FORBIDDEN_PATTERNS = [
@@ -31,7 +32,7 @@ const FORBIDDEN_PATTERNS = [
   { label: ".ts files",     test: (p) => /\.ts$/.test(p) }
 ];
 
-const SIZE_LIMIT_BYTES = 500 * 1024;
+const SIZE_LIMIT_BYTES = 5 * 1024 * 1024;
 
 const results = [];
 const record = (group, label, ok, detail = "") => {

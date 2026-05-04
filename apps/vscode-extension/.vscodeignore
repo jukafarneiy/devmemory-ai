@@ -21,3 +21,7 @@ esbuild.config.*
 **/.ai-memory/**
 **/.claude/**
 .DS_Store
+crea_beer_logo.jpg
+**/*.jpg
+**/*.jpeg
+NOTICE.md

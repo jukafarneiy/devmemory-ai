@@ -1,0 +1,16 @@
+{
+  "root": false,
+  "rules": {
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "vscode",
+            "message": "@devmemory/core must remain vscode-free. Move VS Code-specific code to apps/vscode-extension."
+          }
+        ]
+      }
+    ]
+  }
+}
