@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.3.1 — Marketplace listing refresh: paste-guard hero GIF (2026-05-04)
+
+No functional code changes — pure listing refresh.
+
+- New hero animation: `media/paste-guard.gif` (12 s, 1.0 MB) showing DevMemory blocking a 4-pattern destructive paste (`rm -rf`, `git reset --hard`, `git push --force`, `DROP DATABASE`) and the *Undo paste* recovery.
+- Secondary animation: `media/paste-guard-keep.gif` (8 s, 875 KB) showing the *Keep with warning* alternative flow for the few cases where the developer knowingly proceeds.
+- README rewrite: paste-guard becomes the lead visual; sidebar-v2.gif moves below into "The sidebar adapts to where you are".
+- Marketplace listing now leads with the viral hook (destructive paste blocked) instead of the workflow demo.
+
+If you have v0.3.0 installed, the upgrade is invisible — same 22 commands, same `@devmemory` chat participant, same MCP server.
+
 ## 0.3.0 — Sidebar v2, @devmemory chat participant, MCP server, git-aware memory (2026-05-04)
 
 ### New: Hybrid sidebar (webview hero + simplified TreeView)

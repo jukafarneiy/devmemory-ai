@@ -6,7 +6,7 @@ DevMemory is a VS Code extension that gives Claude Code, Copilot, Cursor, Cline,
 
 > No telemetry by default. No network calls. Everything is plain Markdown under `.ai-memory/`. Open the file, `git diff` it, delete it. Your machine, your files.
 
-![DevMemory AI sidebar — the hero card derives the next-step button from the current state of your local memory](https://github.com/jukafarneiy/devmemory-ai/raw/main/apps/vscode-extension/media/sidebar-v2.gif)
+![DevMemory paste guard blocking a destructive paste from an AI — `rm -rf`, `git push --force`, `DROP DATABASE` all caught before the text lands in your editor](https://github.com/jukafarneiy/devmemory-ai/raw/main/apps/vscode-extension/media/paste-guard.gif)
 
 **Works with:** Claude Code · GitHub Copilot · Cursor · Cline · Continue · Codeium / Windsurf · on-prem LLMs (Llama, Bedrock, Azure OpenAI, …) — anything you can paste a prompt into.
 
@@ -21,11 +21,17 @@ DevMemory is a VS Code extension that gives Claude Code, Copilot, Cursor, Cline,
 5. **Local memory health check.** Audits the `.ai-memory/` store for placeholders, missing files, and sessions saved with warnings. Writes a plain-Markdown report.
 6. **Optional local-only telemetry.** Off by default. When you flip `devmemory.telemetry.enabled` on, DevMemory appends events (durations, command names, paste-guard hits) to `.ai-memory/telemetry/events-YYYYMMDD.jsonl`. Inspect, export, or wipe it with one click. **Never sent over the network.**
 
+## The sidebar adapts to where you are
+
+The hero CTA at the top of the sidebar changes automatically as your memory progresses — *Scan this project* → *Teach the AI* → *Save what the AI told me* → *Resume an AI session* → *Save what the AI did*. No more digging through 17 menu items to find what's next.
+
+![DevMemory AI sidebar — the hero CTA changes automatically when you click Scan](https://github.com/jukafarneiy/devmemory-ai/raw/main/apps/vscode-extension/media/sidebar-v2.gif)
+
 ## Three pains it solves
 
 | Pain | Without DevMemory | With DevMemory |
 |---|---|---|
-| The AI forgets your architecture every session | Re-explain the codebase. Hope it doesn't hallucinate. | Click *Start AI Session* → prompt with your real architecture lands on clipboard. |
+| The AI forgets your architecture every session | Re-explain the codebase. Hope it doesn't hallucinate. | Click *Resume AI Session* → prompt with your real architecture lands on clipboard, or use `@devmemory /resume` in chat. |
 | The AI invents files / functions / decisions | Catch it in code review (or not). | Saving the session triggers a validator that flags simulated content and references to missing files. |
 | The AI proposes `rm -rf` or `DROP DATABASE` | Read carefully before pasting. Hope. | DevMemory blocks the paste modally. One click to undo. |
 

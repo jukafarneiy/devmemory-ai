@@ -2,7 +2,7 @@
   "name": "devmemory-ai-vscode",
   "displayName": "DevMemory AI",
   "description": "Stop your AI from forgetting your codebase — and from suggesting `rm -rf`. Local memory and a destructive-paste guard for Claude, Copilot, Cursor, Cline, Continue, and on-prem LLMs. Includes @devmemory chat participant and MCP server.",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "publisher": "devmemory-ai",
   "engines": {
     "vscode": "^1.97.0"
